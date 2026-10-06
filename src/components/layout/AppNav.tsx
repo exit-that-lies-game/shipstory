@@ -28,7 +28,7 @@ export async function AppNav({ active, q }: { active?: string; q?: string }) {
         <div className="ml-auto flex items-center gap-3 md:ml-0">
           <Button href="/new" size="sm"><Icon name="plus" size={16} /><span className="hidden sm:inline">New project</span></Button>
           <button aria-label="Notifications" className="grid h-9 w-9 place-items-center rounded-full text-muted hover:bg-[#e9eed9]"><Icon name="bell" /></button>
-          {viewer ? <Link href="/me" aria-label="Your profile"><Avatar name={viewer.name} size={34} /></Link> : <Button href="/login" size="sm" variant="ghost">Sign in</Button>}
+          {viewer ? <Link href="/me" aria-label="Your profile"><Avatar name={viewer.name} size={34} /></Link> : <Button href="/login" size="sm" variant="ghost" className="whitespace-nowrap">Sign in</Button>}
         </div>
       </div>
     </header>
