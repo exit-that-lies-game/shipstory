@@ -1,10 +1,17 @@
-// Data access layer. Pages only import from here, so swapping mock data for Supabase touches this folder only.
+// Data access layer. Pages only import from here. Uses Supabase when configured and falls back to demo data
+// only when a query returns nothing in an unconfigured environment.
 import { comments, profiles, projects, topics } from "./mock-data";
+import { supabaseConfigured } from "../supabase/client";
+import { sbGetProfile, sbGetProject, sbListComments, sbListProjects, sbListRisingBuilders, sbListSaved } from "./supabase-source";
 import type { Comment, FeedQuery, Profile, Project } from "./types";
 
 export type { Comment, FeedQuery, Profile, Project };
 
-export async function listProjects({ sort = "trending", tag, q, ownerHandle }: FeedQuery = {}): Promise<Project[]> {
+const live = supabaseConfigured;
+
+export async function listProjects(query: FeedQuery = {}): Promise<Project[]> {
+  if (live) return sbListProjects(query);
+  const { sort = "trending", tag, q, ownerHandle } = query;
   let list = [...projects];
   if (tag) list = list.filter((p) => p.tags.some((t) => t.toLowerCase() === tag.toLowerCase()));
   if (ownerHandle) list = list.filter((p) => p.owner.handle === ownerHandle);
@@ -16,23 +23,23 @@ export async function listProjects({ sort = "trending", tag, q, ownerHandle }: F
 }
 
 export async function getProject(slug: string): Promise<Project | null> {
-  return projects.find((p) => p.slug === slug) ?? null;
+  return live ? sbGetProject(slug) : (projects.find((p) => p.slug === slug) ?? null);
 }
 
 export async function getProfile(handle: string): Promise<Profile | null> {
-  return profiles.find((p) => p.handle === handle) ?? null;
+  return live ? sbGetProfile(handle) : (profiles.find((p) => p.handle === handle) ?? null);
 }
 
 export async function listComments(projectId: string): Promise<Comment[]> {
-  return comments.filter((c) => c.projectId === projectId);
+  return live ? sbListComments(projectId) : comments.filter((c) => c.projectId === projectId);
 }
 
 export async function listRisingBuilders(): Promise<Profile[]> {
-  return profiles;
+  return live ? sbListRisingBuilders() : profiles;
 }
 
 export async function listSaved(): Promise<Project[]> {
-  return projects.slice(0, 3);
+  return live ? sbListSaved() : projects.slice(0, 3);
 }
 
 export async function listTopics(): Promise<string[]> {

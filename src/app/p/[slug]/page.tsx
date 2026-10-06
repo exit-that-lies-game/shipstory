@@ -46,7 +46,7 @@ export default async function ProjectPage({ params }: { params: Params }) {
             <span className="ml-auto"><FollowButton compact /></span>
           </div>
           <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="mt-5 flex items-center justify-center gap-2 rounded-xl bg-terracotta py-4 text-[17px] font-bold text-white shadow-[0_12px_24px_-10px_#c15a3acc] transition-colors hover:bg-[#ad4d30]"><Icon name="play" size={17} />Try it live</a>
-          <div className="mt-3"><ProjectActions likes={project.likes} saves={project.saves} title={project.title} /></div>
+          <div className="mt-3"><ProjectActions likes={project.likes} saves={project.saves} title={project.title} projectId={project.id} /></div>
           <div className="mt-5 flex flex-wrap gap-2">
             {project.stack.map((t) => <Chip key={t}>{t}</Chip>)}
             {project.repoUrl && <a href={project.repoUrl} target="_blank" rel="noopener noreferrer"><Chip><Icon name="code" size={13} />Repo</Chip></a>}
