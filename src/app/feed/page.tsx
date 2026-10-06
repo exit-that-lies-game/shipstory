@@ -34,7 +34,7 @@ export default async function Feed({ searchParams }: { searchParams: SP }) {
                 <li key={b.id} className="flex items-center gap-3">
                   <Avatar name={b.name} size={38} />
                   <Link href={`/u/${b.handle}`} className="min-w-0 flex-1"><b className="block truncate text-sm">{b.handle}</b><span className="text-xs text-muted">{b.projectCount} projects</span></Link>
-                  <FollowButton compact />
+                  <FollowButton compact userId={b.id} />
                 </li>
               ))}
             </ul>

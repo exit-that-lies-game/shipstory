@@ -3,8 +3,8 @@ import { Field, inputCls } from "./Field";
 import type { Draft } from "./types";
 
 export function StepMedia({ d, set }: { d: Draft; set: (p: Partial<Draft>) => void }) {
-  const onCover = (f?: File) => f && set({ coverPreview: URL.createObjectURL(f) });
-  const onShots = (files: FileList | null) => files && set({ shotPreviews: [...d.shotPreviews, ...Array.from(files).map((f) => URL.createObjectURL(f))].slice(0, 6) });
+  const onCover = (f?: File) => f && set({ coverPreview: URL.createObjectURL(f), coverFile: f });
+  const onShots = (files: FileList | null) => files && set({ shotPreviews: [...d.shotPreviews, ...Array.from(files).map((f) => URL.createObjectURL(f))].slice(0, 6), shotFiles: [...d.shotFiles, ...Array.from(files)].slice(0, 6) });
   return (
     <div className="space-y-5">
       <div><h2 className="text-xl font-bold">Links and media</h2><p className="text-sm text-muted">Where people can try it, and what it looks like.</p></div>

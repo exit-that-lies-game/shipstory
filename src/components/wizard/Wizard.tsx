@@ -1,6 +1,9 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { publishProject } from "@/lib/actions/publish";
+import { supabaseConfigured } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { PreviewCard } from "./PreviewCard";
@@ -15,12 +18,24 @@ export function Wizard() {
   const [d, setD] = useState<Draft>(emptyDraft);
   const [errors, setErrors] = useState<string[]>([]);
   const [published, setPublished] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const router = useRouter();
   const set = (p: Partial<Draft>) => { setD((x) => ({ ...x, ...p })); setErrors([]); };
+
+  async function publish() {
+    if (!supabaseConfigured || !d.coverFile) return setPublished(true);
+    setBusy(true);
+    const res = await publishProject({ title: d.title, pitch: d.pitch, description: d.description, tags: d.tags, demoUrl: d.demoUrl, repoUrl: d.repoUrl, cover: d.coverFile, shots: d.shotFiles });
+    setBusy(false);
+    if (res.ok) return router.push(`/p/${res.slug}`);
+    if (res.reason === "auth") return router.push("/login?next=/new");
+    setErrors([res.reason === "limit" ? "You have published a few projects in the last hour. Try again later." : res.message ?? "Could not publish. Try again."]);
+  }
 
   function next() {
     const e = stepErrors(step, d);
     if (e.length) return setErrors(e);
-    if (step === 2) return setPublished(true);
+    if (step === 2) return publish();
     setStep(step + 1);
   }
 
@@ -45,7 +60,7 @@ export function Wizard() {
         {errors.length > 0 && <ul role="alert" className="mt-5 rounded-xl border border-[#e8b9a8] bg-[#fbeee8] p-3 text-sm text-[#9a3f25]">{errors.map((e) => <li key={e}>{e}</li>)}</ul>}
         <div className="mt-8 flex items-center gap-3">
           {step === 0 ? <Button href="/feed" variant="ghost">Cancel</Button> : <Button variant="ghost" onClick={() => setStep(step - 1)}>Back</Button>}
-          <Button onClick={next}>{step === 2 ? "Publish project" : "Continue"}{step < 2 && <Icon name="arrow" size={15} />}</Button>
+          <Button onClick={next} disabled={busy}>{busy ? "Publishing..." : step === 2 ? "Publish project" : "Continue"}{step < 2 && <Icon name="arrow" size={15} />}</Button>
           <span className="ml-auto text-xs text-muted">Draft saved</span>
         </div>
         <Link href="/feed" className="sr-only">Leave</Link>

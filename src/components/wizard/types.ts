@@ -7,9 +7,11 @@ export type Draft = {
   repoUrl: string;
   coverPreview: string | null;
   shotPreviews: string[];
+  coverFile?: File;
+  shotFiles: File[];
 };
 
-export const emptyDraft: Draft = { title: "", pitch: "", description: "", tags: [], demoUrl: "", repoUrl: "", coverPreview: null, shotPreviews: [] };
+export const emptyDraft: Draft = { title: "", pitch: "", description: "", tags: [], demoUrl: "", repoUrl: "", coverPreview: null, shotPreviews: [], shotFiles: [] };
 
 export const TAG_SUGGESTIONS = ["Web", "Mobile", "AI", "Games", "Dev tools", "Music", "Education", "Design"];
 
