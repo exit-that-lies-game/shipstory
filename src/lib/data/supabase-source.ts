@@ -1,6 +1,7 @@
 import { createClient } from "../supabase/server";
 import type { Comment, FeedQuery, Profile, Project } from "./types";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = Record<string, any>;
 
 const toProfile = (r: Row): Profile => ({

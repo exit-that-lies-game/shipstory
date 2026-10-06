@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { myState, toggle } from "@/lib/actions/reactions";
 import { Icon } from "@/components/ui/Icon";
 
-export function ProjectActions({ likes, saves, title, projectId }: { likes: number; saves: number; title: string; projectId?: string }) {
+export function ProjectActions({ likes, title, projectId }: { likes: number; saves?: number; title: string; projectId?: string }) {
   const router = useRouter();
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
