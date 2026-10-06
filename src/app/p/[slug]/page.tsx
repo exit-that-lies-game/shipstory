@@ -32,7 +32,7 @@ export default async function ProjectPage({ params }: { params: Params }) {
       <div className="mx-auto grid max-w-[1300px] gap-10 px-5 py-8 lg:grid-cols-[1fr_380px] lg:px-8">
         <div className="min-w-0">
           <DoodleBack href="/feed" label="Back to feed" />
-          <ScreenshotGallery images={project.screenshots} title={project.title} host={host} />
+          <ScreenshotGallery images={project.screenshots.length ? project.screenshots : [project.cover]} title={project.title} host={host} />
           <section className="mt-10"><h2 className="text-xl font-bold">About</h2><p className="mt-2 max-w-3xl leading-relaxed text-[#4a4c38]">{project.description}</p></section>
           <div className="mt-10"><CommentSection initial={comments} total={project.comments} projectId={project.id} /></div>
         </div>
