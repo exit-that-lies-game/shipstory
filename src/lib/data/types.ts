@@ -46,4 +46,7 @@ export type FeedQuery = {
   tag?: string;
   q?: string;
   ownerHandle?: string;
+  followingOf?: string;
 };
+
+export type Viewer = { id: string; handle: string; name: string };

@@ -6,7 +6,7 @@ const main: { href: string; label: string; icon: IconName; key: string }[] = [
   { href: "/feed?sort=latest", label: "Explore", icon: "compass", key: "explore" },
   { href: "/feed?view=following", label: "Following", icon: "users", key: "following" },
   { href: "/saved", label: "Saved", icon: "bookmark", key: "saved" },
-  { href: "/u/balu", label: "My projects", icon: "folder", key: "mine" },
+  { href: "/me", label: "My projects", icon: "folder", key: "mine" },
 ];
 
 const topicIcons: Record<string, IconName> = { Web: "code", Mobile: "grid", AI: "bolt", Games: "play", "Dev tools": "tag" };

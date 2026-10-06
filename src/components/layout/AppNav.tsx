@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { Avatar } from "@/components/ui/Avatar";
 import { SearchBox } from "./SearchBox";
+import { getViewer } from "@/lib/data";
 
 const links = [
   { href: "/feed", label: "Home", key: "home" },
@@ -12,7 +13,8 @@ const links = [
   { href: "/saved", label: "Saved", key: "saved" },
 ];
 
-export function AppNav({ active, q }: { active?: string; q?: string }) {
+export async function AppNav({ active, q }: { active?: string; q?: string }) {
+  const viewer = await getViewer();
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-[#faf7edee] backdrop-blur">
       <div className="mx-auto flex h-[68px] max-w-[1400px] items-center gap-6 px-5 lg:px-8">
@@ -26,7 +28,7 @@ export function AppNav({ active, q }: { active?: string; q?: string }) {
         <div className="ml-auto flex items-center gap-3 md:ml-0">
           <Button href="/new" size="sm"><Icon name="plus" size={16} /><span className="hidden sm:inline">New project</span></Button>
           <button aria-label="Notifications" className="grid h-9 w-9 place-items-center rounded-full text-muted hover:bg-[#e9eed9]"><Icon name="bell" /></button>
-          <Link href="/u/balu" aria-label="Your profile"><Avatar name="Balu" size={34} /></Link>
+          {viewer ? <Link href="/me" aria-label="Your profile"><Avatar name={viewer.name} size={34} /></Link> : <Button href="/login" size="sm" variant="ghost">Sign in</Button>}
         </div>
       </div>
     </header>

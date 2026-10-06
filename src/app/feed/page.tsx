@@ -5,14 +5,15 @@ import { FeedTabs } from "@/components/project/FeedTabs";
 import { ProjectGrid } from "@/components/project/ProjectGrid";
 import { Avatar } from "@/components/ui/Avatar";
 import { FollowButton } from "@/components/profile/FollowButton";
-import { listProjects, listRisingBuilders, listTopics } from "@/lib/data";
+import { getViewer, listProjects, listRisingBuilders, listTopics } from "@/lib/data";
 
 type SP = Promise<{ sort?: string; tag?: string; q?: string; view?: string }>;
 
 export default async function Feed({ searchParams }: { searchParams: SP }) {
   const { sort, tag, q, view } = await searchParams;
   const s = sort === "latest" ? "latest" : "trending";
-  const [projects, builders, topics] = await Promise.all([listProjects({ sort: s, tag, q }), listRisingBuilders(), listTopics()]);
+  const viewer = view === "following" ? await getViewer() : null;
+  const [projects, builders, topics] = await Promise.all([listProjects({ sort: s, tag, q, followingOf: viewer?.id }), listRisingBuilders(), listTopics()]);
   const title = q ? `Results for "${q}"` : tag ? tag : view === "following" ? "Following" : s === "latest" ? "Latest" : "Trending";
   return (
     <>
@@ -24,7 +25,7 @@ export default async function Feed({ searchParams }: { searchParams: SP }) {
             <div><h1 className="text-2xl font-extrabold tracking-tight">{title}</h1><p className="text-sm text-muted">{projects.length} projects</p></div>
             <FeedTabs sort={s} tag={tag} q={q} />
           </div>
-          <ProjectGrid projects={projects} />
+          {view === "following" && !viewer ? <p className="rounded-2xl border border-dashed border-line p-10 text-center text-muted"><Link href="/login?next=/feed%3Fview%3Dfollowing" className="font-semibold text-terracotta">Sign in</Link> to see projects from builders you follow.</p> : <ProjectGrid projects={projects} />}
         </main>
         <aside className="hidden w-72 shrink-0 xl:block">
           <div className="sticky top-[92px] rounded-2xl border border-line bg-paper p-5 shadow-soft">

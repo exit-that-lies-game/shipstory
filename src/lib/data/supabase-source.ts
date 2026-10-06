@@ -1,5 +1,5 @@
 import { createClient } from "../supabase/server";
-import type { Comment, FeedQuery, Profile, Project } from "./types";
+import type { Comment, FeedQuery, Profile, Project, Viewer } from "./types";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = Record<string, any>;
@@ -40,7 +40,15 @@ const toProject = (r: Row): Project => ({
 
 const SELECT = "*, owner:profiles!projects_owner_id_fkey(id, handle, display_name)";
 
-export async function sbListProjects({ sort = "trending", tag, q, ownerHandle }: FeedQuery = {}): Promise<Project[]> {
+export async function sbGetViewer(): Promise<Viewer | null> {
+  const sb = await createClient();
+  const { data } = await sb.auth.getUser();
+  if (!data.user) return null;
+  const { data: p } = await sb.from("profiles").select("id, handle, display_name").eq("id", data.user.id).maybeSingle();
+  return p ? { id: p.id, handle: p.handle, name: p.display_name ?? p.handle } : null;
+}
+
+export async function sbListProjects({ sort = "trending", tag, q, ownerHandle, followingOf }: FeedQuery = {}): Promise<Project[]> {
   const sb = await createClient();
   let query = sb.from(sort === "trending" ? "trending_projects" : "projects").select(SELECT).eq("status", "published");
   if (tag) query = query.contains("tags", [tag.toLowerCase()]);
@@ -49,6 +57,12 @@ export async function sbListProjects({ sort = "trending", tag, q, ownerHandle }:
     const { data: p } = await sb.from("profiles").select("id").eq("handle", ownerHandle).maybeSingle();
     if (!p) return [];
     query = query.eq("owner_id", p.id);
+  }
+  if (followingOf) {
+    const { data: f } = await sb.from("follows").select("followee_id").eq("follower_id", followingOf);
+    const ids = (f ?? []).map((r: Row) => r.followee_id);
+    if (!ids.length) return [];
+    query = query.in("owner_id", ids);
   }
   query = sort === "trending" ? query.order("score", { ascending: false }) : query.order("created_at", { ascending: false });
   const { data } = await query.limit(60);
