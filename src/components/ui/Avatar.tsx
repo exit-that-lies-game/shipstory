@@ -1,0 +1,14 @@
+const tones = ["from-terracotta to-sage", "from-olive to-sage", "from-[#d98a6e] to-terracotta", "from-sage to-[#e9eed9]"];
+
+export function Avatar({ name, size = 28 }: { name: string; size?: number }) {
+  const tone = tones[(name.charCodeAt(0) || 0) % tones.length];
+  return (
+    <span
+      className={`inline-flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${tone} font-bold text-white ring-2 ring-paper`}
+      style={{ width: size, height: size, fontSize: size * 0.4 }}
+      aria-hidden
+    >
+      {name.slice(0, 1).toUpperCase()}
+    </span>
+  );
+}

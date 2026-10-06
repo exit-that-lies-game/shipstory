@@ -1,26 +1,46 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --cream: #faf7ed;
+  --paper: #fffdf6;
+  --ink: #2b2d1f;
+  --muted: #6b6d58;
+  --line: #e6e0cc;
+  --terracotta: #c15a3a;
+  --sage: #a3b18a;
+  --olive: #556b2f;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-cream: var(--cream);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-terracotta: var(--terracotta);
+  --color-sage: var(--sage);
+  --color-olive: var(--olive);
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-ss), ui-monospace, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html { scroll-behavior: smooth; }
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+::selection { background: #a3b18a66; }
+.shadow-soft { box-shadow: 0 1px 0 #fff inset, 0 10px 30px -14px #556b2f33, 0 2px 6px -2px #2b2d1f14; }
+.shadow-lift { box-shadow: 0 24px 50px -22px #556b2f55, 0 4px 12px -4px #2b2d1f1a; }
+.bg-glow { background: radial-gradient(60% 50% at 20% 0%, #a3b18a40, transparent 70%), radial-gradient(40% 40% at 90% 20%, #c15a3a14, transparent 70%); }
+@keyframes floaty { 0%,100% { transform: translateY(0) rotate(var(--r,0deg)); } 50% { transform: translateY(-6px) rotate(var(--r,0deg)); } }
+.floaty { animation: floaty 7s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .floaty { animation: none; } }
+
+/* paper grain, like the doodle reference */
+body::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: .35; mix-blend-mode: multiply;
+  background-image: url("/grain.svg");
 }
