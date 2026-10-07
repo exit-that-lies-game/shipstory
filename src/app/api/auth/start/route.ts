@@ -12,6 +12,7 @@ export async function POST(request: Request) {
     if (!await verifyTurnstile(token, "login", url.hostname)) return NextResponse.json({ error: "Verification did not complete. Please try again." }, { status: 403 });
     const sb = await createClient();
     const { data, error } = await sb.auth.signInWithOAuth({ provider, options: {
+      scopes: provider === "github" ? "read:user user:email" : undefined,
       redirectTo: `${url.origin}/auth/callback?next=${encodeURIComponent(safeReturnPath(next, url.origin))}`, skipBrowserRedirect: true,
     } });
     if (error || !data.url) return NextResponse.json({ error: "Sign-in could not start. Please try again." }, { status: 502 });

@@ -25,6 +25,7 @@ export function OAuthButtons({ next = "/feed" }: { next?: string }) {
   const base = "inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-3 text-base font-semibold transition-colors disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-olive";
   return (
     <div className="space-y-3">
+      <p className="text-center text-xs text-muted">GitHub sign-in asks for read-only profile and email access so you can import your own public repositories. No private-repo access.</p>
       <TurnstileCheck key={attempt} action="login" onToken={setToken} />
       <button disabled={!!busy || !token} onClick={() => go("github")} className={`${base} bg-terracotta text-white hover:bg-[#a84b2f]`}>
         <Icon name="github" size={18} />{busy === "github" ? "Redirecting..." : "Continue with GitHub"}
