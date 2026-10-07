@@ -61,7 +61,7 @@ export function Wizard() {
         <div className="mt-8 flex items-center gap-3">
           {step === 0 ? <Button href="/feed" variant="ghost">Cancel</Button> : <Button variant="ghost" onClick={() => setStep(step - 1)}>Back</Button>}
           <Button onClick={next} disabled={busy}>{busy ? "Publishing..." : step === 2 ? "Publish project" : "Continue"}{step < 2 && <Icon name="arrow" size={15} />}</Button>
-          <span className="ml-auto text-xs text-muted">Draft saved</span>
+          <span className="ml-auto text-xs text-muted">Draft in this tab</span>
         </div>
         <Link href="/feed" className="sr-only">Leave</Link>
       </div>

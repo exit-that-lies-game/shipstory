@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Downloaded local design tool executables (not application source)
+.agents/skills/impeccable/scripts/bin/
