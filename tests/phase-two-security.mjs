@@ -1,0 +1,31 @@
+import {PGlite} from '@electric-sql/pglite';
+import fs from 'fs';
+const db=new PGlite();
+await db.exec(`create role anon; create role authenticated;create schema auth;
+create table auth.users(id uuid primary key);
+create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
+create table public.profiles(id uuid primary key references auth.users,handle text);
+create table public.projects(id uuid primary key,owner_id uuid references profiles,slug text,title text,status text,moderated_hidden boolean default false,created_at timestamptz default now(),like_count int default 0,save_count int default 0,comment_count int default 0);
+create table public.follows(follower_id uuid references profiles,followee_id uuid references profiles);
+create table public.comments(id uuid primary key,project_id uuid references projects,author_id uuid references profiles);
+create function public.can_contribute() returns boolean language sql as $$ select true $$;
+create function public.has_verified_session() returns boolean language sql as $$select true$$;
+create table public.rate_events(user_id uuid,kind text,created_at timestamptz default now());
+create function public.rate_limit() returns trigger language plpgsql as $$begin return new;end$$;
+grant usage on schema public,auth to anon,authenticated;grant select on profiles,projects,follows,comments to anon,authenticated;
+alter table projects enable row level security;create policy read_projects on projects for select using(status='published' and not moderated_hidden or owner_id=auth.uid());`);
+await db.exec(fs.readFileSync('supabase/migrations/0012_phase_two.sql','utf8'));
+const owner='aaaaaaaa-0000-4000-8000-000000000001',other='aaaaaaaa-0000-4000-8000-000000000002',pid='bbbbbbbb-0000-4000-8000-000000000001';
+await db.exec(`insert into auth.users values('${owner}'),('${other}');insert into profiles values('${owner}','owner'),('${other}','other');insert into projects(id,owner_id,slug,title,status) values('${pid}','${owner}','test','Test','published');insert into follows values('${other}','${owner}');`);
+let pass=0;async function check(name,fn){await fn();console.log('PASS',name);pass++;}
+async function as(uid,sql){return db.exec(`begin;set local role authenticated;select set_config('request.jwt.claim.sub','${uid}',true);${sql};commit;`);}
+await check('owner update insertion',()=>as(owner,`insert into project_updates(project_id,author_id,title,body) values('${pid}','${owner}','Shipped','Details')`));
+await check('follower notification created',async()=>{let r=await db.query('select kind,recipient_id from notifications order by kind');if(r.rows.length!==2||!r.rows.some(x=>x.kind==='update'&&x.recipient_id===other))throw Error('notifications');});
+await check('nonowner update denied',async()=>{try{await as(other,`insert into project_updates(project_id,author_id,title,body) values('${pid}','${other}','No','No')`);throw Error('allowed');}catch(e){await db.exec('rollback');if(!String(e).includes('row-level security'))throw e;}});
+await check('notifications private',async()=>{await db.exec(`begin;set local role authenticated;select set_config('request.jwt.claim.sub','${other}',true);`);let r=await db.query('select count(*) n from notifications');if(r.rows[0].n!==1)throw Error('privacy');await db.exec('rollback');});
+await check('try aggregate counts taps',async()=>{await as(other,`select record_project_try('${pid}');select record_project_try('${pid}')`);let r=await db.query('select clicks from project_click_days');if(r.rows[0].clicks!==2)throw Error('count');});
+await check('analytics private by owner',async()=>{await db.exec(`begin;set local role authenticated;select set_config('request.jwt.claim.sub','${other}',true);`);let r=await db.query('select builder_analytics() d');if(r.rows[0].d.length)throw Error('leak');await db.exec('rollback');});
+await check('client cannot call trigger helper',async()=>{try{await as(other,'select notify_activity()');throw Error('allowed');}catch(e){await db.exec('rollback');if(!String(e).includes('permission denied'))throw e;}});
+await check('hidden updates unavailable',async()=>{await db.exec(`update projects set moderated_hidden=true where id='${pid}';begin;set local role anon;`);let r=await db.query('select count(*) n from project_updates');if(r.rows[0].n!==0)throw Error('hidden leak');await db.exec('rollback');});
+await check('anonymous click function denied',async()=>{try{await db.exec(`begin;set local role anon;select record_project_try('${pid}');commit;`);throw Error('allowed');}catch(e){await db.exec('rollback');if(!String(e).includes('permission denied'))throw e;}});
+console.log('TOTAL',pass);await db.close();

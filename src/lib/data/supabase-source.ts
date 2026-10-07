@@ -1,5 +1,6 @@
+import { cache } from "react";
 import { safeHttpUrl } from "../safe-url";
-import { createClient } from "../supabase/server";
+import { createClient, getAuthUser } from "../supabase/server";
 import type { Comment, FeedQuery, Profile, Project, Viewer } from "./types";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -41,13 +42,13 @@ const toProject = (r: Row): Project => ({
 
 const SELECT = "*, owner:profiles!projects_owner_id_fkey(id, handle, display_name)";
 
-export async function sbGetViewer(): Promise<Viewer | null> {
+export const sbGetViewer = cache(async function sbGetViewer(): Promise<Viewer | null> {
   const sb = await createClient();
-  const { data } = await sb.auth.getUser();
+  const { data } = await getAuthUser();
   if (!data.user) return null;
   const { data: p } = await sb.from("profiles").select("id, handle, display_name").eq("id", data.user.id).maybeSingle();
   return p ? { id: p.id, handle: p.handle, name: p.display_name ?? p.handle } : null;
-}
+});
 
 export async function sbListProjects({ sort = "trending", tag, q, ownerHandle, followingOf }: FeedQuery = {}): Promise<Project[]> {
   const sb = await createClient();

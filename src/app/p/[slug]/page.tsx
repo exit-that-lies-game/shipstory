@@ -1,3 +1,7 @@
+import { ProjectUpdates } from "@/components/updates/ProjectUpdates";
+import { TryProject } from "@/components/project/TryProject";
+import { createClient } from "@/lib/supabase/server";
+import { getViewer } from "@/lib/data";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -25,6 +29,8 @@ export default async function ProjectPage({ params }: { params: Params }) {
   const project = await getProject((await params).slug);
   if (!project) notFound();
   const [comments, owner] = await Promise.all([listComments(project.id), getProfile(project.owner.handle)]);
+  const sb = await createClient();
+  const [viewer, updateResult] = await Promise.all([getViewer(), sb.from("project_updates").select("id,title,body,created_at").eq("project_id",project.id).order("created_at",{ascending:false}).limit(50)]);
   const host = project.demoUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
   return (
     <>
@@ -34,6 +40,7 @@ export default async function ProjectPage({ params }: { params: Params }) {
           <DoodleBack href="/feed" label="Back to feed" />
           <ScreenshotGallery images={project.screenshots.length ? project.screenshots : [project.cover]} title={project.title} host={host} />
           <section className="mt-10"><h2 className="text-xl font-bold">About</h2><p className="mt-2 max-w-3xl leading-relaxed text-[#4a4c38]">{project.description}</p></section>
+          <ProjectUpdates projectId={project.id} owner={viewer?.id===project.owner.id} initial={updateResult.data??[]}/>
           <div className="mt-10"><CommentSection initial={comments} total={project.comments} projectId={project.id} /></div>
         </div>
         <aside className="lg:sticky lg:top-[92px] lg:self-start">
@@ -45,7 +52,7 @@ export default async function ProjectPage({ params }: { params: Params }) {
             <span className="text-sm text-muted">&middot; {new Date(project.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</span>
             <span className="ml-auto"><FollowButton compact userId={project.owner.id} /></span>
           </div>
-          <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="mt-5 flex items-center justify-center gap-2 rounded-xl bg-terracotta py-4 text-[17px] font-bold text-white shadow-[0_12px_24px_-10px_#c15a3acc] transition-colors hover:bg-[#ad4d30]"><Icon name="play" size={17} />Try it live</a>
+          <TryProject id={project.id} url={project.demoUrl}/>
           <div className="mt-3"><ProjectActions likes={project.likes} saves={project.saves} title={project.title} projectId={project.id} /></div>
           <div className="mt-5 flex flex-wrap gap-2">
             {project.stack.map((t) => <Chip key={t}>{t}</Chip>)}

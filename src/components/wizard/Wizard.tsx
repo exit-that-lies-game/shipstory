@@ -1,4 +1,5 @@
 "use client";
+import { GitHubImport } from "./GitHubImport";
 import { useState } from "react";
 import { WriteVerification } from "@/components/abuse/TurnstileCheck";
 import Link from "next/link";
@@ -55,7 +56,7 @@ export function Wizard() {
     <div className="grid gap-10 lg:grid-cols-[200px_minmax(0,1fr)_380px]">
       <div><h1 className="mb-6 text-2xl font-extrabold tracking-tight">New project</h1><Stepper step={step} /></div>
       <div className="max-w-xl">
-        {step === 0 && <StepBasics d={d} set={set} />}
+        {step === 0 && <><GitHubImport apply={set}/><StepBasics d={d} set={set}/></>}
         {step === 1 && <StepMedia d={d} set={set} />}
         {step === 2 && <><StepReview d={d} /><WriteVerification /></>}
         {errors.length > 0 && <ul role="alert" className="mt-5 rounded-xl border border-[#e8b9a8] bg-[#fbeee8] p-3 text-sm text-[#9a3f25]">{errors.map((e) => <li key={e}>{e}</li>)}</ul>}

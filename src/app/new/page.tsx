@@ -1,9 +1,12 @@
+import { redirect } from "next/navigation";
+import { getViewer } from "@/lib/data";
 import { AppNav } from "@/components/layout/AppNav";
 import { Wizard } from "@/components/wizard/Wizard";
 
 export const metadata = { title: "New project - ShipStory" };
 
-export default function NewProject() {
+export default async function NewProject() {
+  if (!await getViewer()) redirect("/login?next=/new");
   return (
     <>
       <AppNav />

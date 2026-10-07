@@ -3,7 +3,7 @@ import { MarketingNav } from "@/components/layout/MarketingNav";
 import { ProjectCard } from "@/components/project/ProjectCard";
 import { Button } from "@/components/ui/Button";
 import { Icon, type IconName } from "@/components/ui/Icon";
-import { listProjects } from "@/lib/data";
+import { projects as landingSamples } from "@/lib/data/mock-data";
 import { DoodleStrip } from "@/components/doodle/DoodleStrip";
 
 const perks: { icon: IconName; title: string; sub: string }[] = [
@@ -19,7 +19,7 @@ const steps = [
 ];
 
 export default async function Landing() {
-  const [a, b, c] = await listProjects({ sort: "trending" });
+  const [a, b, c] = landingSamples;
   return (
     <div className="bg-glow relative overflow-hidden">
       <Image src="/art/leaves.jpg" alt="" width={520} height={690} priority className="pointer-events-none absolute -right-16 top-0 hidden h-[760px] w-auto mix-blend-multiply opacity-90 [mask-image:radial-gradient(closest-side,#000_55%,transparent_100%)] lg:block" />
@@ -45,8 +45,10 @@ export default async function Landing() {
             </ul>
           </div>
           <div className="relative mx-auto hidden h-[640px] w-full max-w-[560px] sm:block">
-            {[{ p: a, cls: "left-0 top-0 w-[360px]", r: -3 }, { p: b, cls: "right-0 top-[215px] w-[340px]", r: 2.5 }, { p: c, cls: "left-6 top-[430px] w-[330px]", r: -1.5 }].map(({ p, cls, r }, i) => (
-              <div key={p.id} className={`floaty absolute ${cls}`} style={{ ["--r" as string]: `${r}deg`, animationDelay: `${i * 0.8}s` }}>
+
+            <p className="absolute -top-7 left-0 text-xs font-semibold uppercase tracking-widest text-muted">Sample projects · for illustration</p>
+            {[{ p: a, cls: "left-0 top-0 w-[360px]", r: -3 }, { p: b, cls: "right-0 top-[215px] w-[340px]", r: 2.5 }, { p: c, cls: "left-6 top-[430px] w-[330px]", r: -1.5 }].filter(item => Boolean(item.p)).map(({ p, cls, r }, i) => (
+              <div key={p.id} inert aria-label={`Sample project: ${p.title}`} className={`floaty absolute ${cls}`} style={{ ["--r" as string]: `${r}deg`, animationDelay: `${i * 0.8}s` }}>
                 <ProjectCard project={p} tilt={r} />
               </div>
             ))}
