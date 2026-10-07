@@ -31,6 +31,12 @@ export function TurnstileCheck({ action, onToken }: { action: "login" | "write";
 
 export function WriteVerification() {
   const [verified, setVerified] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  useEffect(() => {
+    if (!verified) return;
+    const timer = setTimeout(() => setVerified(false), 55 * 60 * 1000);
+    return () => clearTimeout(timer);
+  }, [verified]);
   const [error, setError] = useState("");
   const verify = useCallback(async (token: string) => {
     if (!token) { setVerified(false); return; }
@@ -43,7 +49,7 @@ export function WriteVerification() {
   }, []);
   if (!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) return null;
   return <div className="my-4 text-sm text-muted">
-    {verified ? <p role="status">Verified for this session.</p> : <><p className="mb-2">Quick check before posting or publishing.</p><TurnstileCheck action="write" onToken={verify} /></>}
-    {error && <p role="alert" className="mt-2 text-terracotta">{error}</p>}
+    {verified ? <p role="status">Verified. This check renews before it expires.</p> : <><p className="mb-2">Quick check before posting or publishing.</p><TurnstileCheck key={attempt} action="write" onToken={verify} /></>}
+    {error && <div className="mt-2 text-terracotta"><p role="alert">{error}</p><button type="button" className="mt-2 underline" onClick={() => { setError(""); setVerified(false); setAttempt(v => v + 1); }}>Try again</button></div>}
   </div>;
 }
