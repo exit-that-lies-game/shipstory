@@ -1,3 +1,4 @@
+import { FeedAnnouncements } from "@/components/admin/FeedAnnouncements";
 import Link from "next/link";
 import { AppNav } from "@/components/layout/AppNav";
 import { Sidebar } from "@/components/layout/Sidebar";
@@ -20,7 +21,7 @@ export default async function Feed({ searchParams }: { searchParams: SP }) {
       <AppNav active={sort === "latest" ? "explore" : view === "following" ? "following" : "home"} q={q} />
       <div className="mx-auto flex max-w-[1400px] gap-8 px-5 py-8 lg:px-8">
         <Sidebar active={sort === "latest" ? "explore" : "home"} activeTag={tag} topics={topics} />
-        <main className="min-w-0 flex-1">
+        <main className="min-w-0 flex-1"><FeedAnnouncements/>
           <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
             <div><h1 className="text-2xl font-extrabold tracking-tight">{title}</h1><p className="text-sm text-muted">{projects.length} projects</p></div>
             <FeedTabs sort={s} tag={tag} q={q} />
