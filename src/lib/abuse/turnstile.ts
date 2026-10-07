@@ -9,9 +9,11 @@ export async function verifyTurnstile(token: unknown, action: string, hostname: 
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ secret, response: token }), signal: AbortSignal.timeout(8000), cache: "no-store",
     });
-    if (!response.ok) return false;
+    if (!response.ok) { console.warn("Turnstile verification HTTP failure", response.status); return false; }
     const result = await response.json();
-    return result.success === true && result.action === action && result.hostname === hostname;
+    const valid = result.success === true && result.action === action && result.hostname === hostname;
+    if (!valid) console.warn("Turnstile verification rejected", { errors: result["error-codes"], action: result.action, hostname: result.hostname, expectedAction: action, expectedHostname: hostname });
+    return valid;
   } catch { return false; }
 }
 
