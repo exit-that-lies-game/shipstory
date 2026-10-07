@@ -3,7 +3,10 @@ import "server-only";
 export async function verifyTurnstile(token: unknown, action: string, hostname: string): Promise<boolean> {
   const secret = process.env.TURNSTILE_SECRET_KEY;
   const allowed = (process.env.TURNSTILE_HOSTNAMES ?? "").split(",").map(s => s.trim()).filter(Boolean);
-  if (!secret || !allowed.includes(hostname) || typeof token !== "string" || token.length < 10 || token.length > 2048) return false;
+  if (!secret || !allowed.includes(hostname) || typeof token !== "string" || token.length < 10 || token.length > 2048) {
+    console.warn("Turnstile precheck failed", { hasSecret: !!secret, hostnameAllowed: allowed.includes(hostname), hostname, tokenType: typeof token, tokenLength: typeof token === "string" ? token.length : null });
+    return false;
+  }
   try {
     const response = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
       method: "POST", headers: { "Content-Type": "application/json" },

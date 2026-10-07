@@ -4,7 +4,7 @@ import { safeReturnPath } from "@/lib/safe-url";
 import { sameOrigin, verifyTurnstile } from "@/lib/abuse/turnstile";
 
 export async function POST(request: Request) {
-  if (!sameOrigin(request)) return NextResponse.json({ error: "Invalid request." }, { status: 403 });
+  if (!sameOrigin(request)) { console.warn("auth/start origin mismatch", { origin: request.headers.get("origin"), url: new URL(request.url).origin }); return NextResponse.json({ error: "Invalid request." }, { status: 403 }); }
   try {
     const { token, provider, next } = await request.json();
     const url = new URL(request.url);
