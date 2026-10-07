@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Logo } from "@/components/ui/Logo";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
-import { Avatar } from "@/components/ui/Avatar";
+import { AccountMenu } from "./AccountMenu";
 import { SearchBox } from "./SearchBox";
 import { adminAccess } from "@/lib/admin/access";
 import { getViewer } from "@/lib/data";
@@ -32,7 +32,7 @@ export async function AppNav({ active, q }: { active?: string; q?: string }) {
           {admin && <Link href="/admin" className="text-xs font-semibold text-olive">Admin</Link>}
           <Button href="/new" size="sm"><Icon name="plus" size={16} /><span className="hidden sm:inline">New project</span></Button>
           <Link href="/notifications" aria-label="Notifications" className="grid h-9 w-9 place-items-center rounded-full text-muted hover:bg-[#e9eed9]"><Icon name="bell" /></Link>
-          {viewer ? <Link href="/me" aria-label="Your profile"><Avatar name={viewer.name} size={34} /></Link> : <Button href="/login" size="sm" variant="ghost" className="whitespace-nowrap">Sign in</Button>}
+          {viewer ? <AccountMenu name={viewer.name}/> : <Button href="/login" size="sm" variant="ghost" className="whitespace-nowrap">Sign in</Button>}
         </div>
       </div>
     </header>
