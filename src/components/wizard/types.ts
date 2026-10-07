@@ -1,4 +1,6 @@
 export type Draft = {
+  privateSource?: boolean;
+  privateReviewed?: boolean;
   title: string;
   pitch: string;
   description: string;
