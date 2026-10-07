@@ -1,3 +1,4 @@
+import { safeHttpUrl } from "../safe-url";
 import { createClient } from "../supabase/server";
 import type { Comment, FeedQuery, Profile, Project, Viewer } from "./types";
 
@@ -24,8 +25,8 @@ const toProject = (r: Row): Project => ({
   title: r.title,
   pitch: r.tagline,
   description: r.description ?? "",
-  demoUrl: r.live_url ?? "",
-  repoUrl: r.repo_url ?? undefined,
+  demoUrl: safeHttpUrl(r.live_url),
+  repoUrl: safeHttpUrl(r.repo_url) || undefined,
   cover: r.cover_url ?? "/covers/art.jpg",
   screenshots: r.screenshots ?? [],
   tags: r.tags ?? [],

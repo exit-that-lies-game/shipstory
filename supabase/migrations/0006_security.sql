@@ -1,0 +1,38 @@
+begin;
+revoke all on function public.bump(text,text,uuid,int),public.handle_new_user(),public.tg_reactions(),public.tg_saves(),public.tg_comments(),public.tg_comment_likes(),public.rate_limit() from public,anon,authenticated;
+revoke insert,update on public.projects from anon,authenticated;
+grant insert(slug,owner_id,title,tagline,description,live_url,repo_url,tags,cover_url,screenshots,status),update(slug,title,tagline,description,live_url,repo_url,tags,cover_url,screenshots,status) on public.projects to authenticated;
+revoke insert,update on public.profiles from anon,authenticated;
+grant update(handle,display_name,bio,avatar_url,links) on public.profiles to authenticated;
+revoke insert,update on public.comments from anon,authenticated;
+grant insert(project_id,author_id,parent_id,body) on public.comments to authenticated;
+revoke insert on public.reactions,public.saves,public.follows,public.reports from anon,authenticated;
+grant insert(user_id,project_id) on public.reactions,public.saves to authenticated;
+grant insert(follower_id,followee_id) on public.follows to authenticated;
+grant insert(reporter_id,project_id,comment_id,reason,details) on public.reports to authenticated;
+drop policy "comments read" on public.comments;
+create policy "comments read" on public.comments for select using (exists(select 1 from public.projects p where p.id=project_id));
+drop policy "comments own ins" on public.comments;
+create policy "comments own ins" on public.comments for insert to authenticated with check (author_id=auth.uid() and exists(select 1 from public.projects p where p.id=project_id and p.status='published') and parent_id is null);
+drop policy "reactions read" on public.reactions;
+create policy "reactions read" on public.reactions for select using(exists(select 1 from public.projects p where p.id=project_id));
+drop policy "reactions own ins" on public.reactions;
+create policy "reactions own ins" on public.reactions for insert to authenticated with check(user_id=auth.uid() and exists(select 1 from public.projects p where p.id=project_id and p.status='published'));
+drop policy "saves own ins" on public.saves;
+create policy "saves own ins" on public.saves for insert to authenticated with check(user_id=auth.uid() and exists(select 1 from public.projects p where p.id=project_id and p.status='published'));
+drop policy "clikes read" on public.comment_likes;
+create policy "clikes read" on public.comment_likes for select using(exists(select 1 from public.comments c where c.id=comment_id));
+drop policy "clikes own ins" on public.comment_likes;
+create policy "clikes own ins" on public.comment_likes for insert to authenticated with check(user_id=auth.uid() and exists(select 1 from public.comments c join public.projects p on p.id=c.project_id where c.id=comment_id and p.status='published'));
+create table public.rate_windows(user_id uuid not null references auth.users(id) on delete cascade,kind text not null,window_start timestamptz not null,attempts int not null,primary key(user_id,kind,window_start));
+alter table public.rate_windows enable row level security;
+revoke all on public.rate_windows from public,anon,authenticated;
+create or replace function public.rate_limit() returns trigger language plpgsql security definer set search_path=public as $$
+declare lim int:=tg_argv[0]::int; uid uuid:=(to_jsonb(new)->>tg_argv[1])::uuid; hits int;
+begin
+insert into public.rate_windows values(uid,tg_table_name,date_trunc('hour',now()),1) on conflict(user_id,kind,window_start) do update set attempts=rate_windows.attempts+1 returning attempts into hits;
+if hits>lim then raise exception 'Rate limit reached, try again later'; end if;
+return new;
+end $$;
+alter table public.projects add constraint safe_live_url check(live_url is null or live_url ~* '^https?://[^[:space:]]+$'),add constraint safe_repo_url check(repo_url is null or repo_url ~* '^https?://[^[:space:]]+$'),add constraint bounded_description check(char_length(description)<=20000),add constraint bounded_media check(cardinality(screenshots)<=6 and cardinality(tags)<=10);
+commit;

@@ -1,3 +1,4 @@
+import { safeHttpUrl } from "../safe-url";
 import { createClient } from "../supabase/client";
 import { currentUserId } from "./auth";
 
@@ -19,6 +20,8 @@ export async function publishProject(input: PublishInput): Promise<PublishResult
   const uid = await currentUserId();
   if (!uid) return { ok: false, reason: "auth" };
   try {
+    if (!safeHttpUrl(input.demoUrl) || (input.repoUrl && !safeHttpUrl(input.repoUrl))) return { ok: false, reason: "error", message: "Use an http or https project link." };
+    if (input.shots.length > 6 || ![input.cover, ...input.shots].every(f => ["image/png", "image/jpeg", "image/webp"].includes(f.type))) return { ok: false, reason: "error", message: "Use PNG, JPG or WebP images, up to 6 screenshots." };
     if (input.cover.size > 5 * 1024 * 1024 || input.shots.some((f) => f.size > 5 * 1024 * 1024)) return { ok: false, reason: "error", message: "Images must be 5 MB or smaller." };
     const [cover, ...shots] = await Promise.all([input.cover, ...input.shots].map((f) => upload(uid, f)));
     const slug = `${slugify(input.title)}-${Math.random().toString(36).slice(2, 6)}`;
