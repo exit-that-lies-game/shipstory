@@ -6,7 +6,7 @@ import { githubIdentity } from "@/lib/github-import";
 export const CONNECTION_COOKIE="shipstory_github_connection";
 export const FLOW_COOKIE="shipstory_github_flow";
 export const cookieOptions={httpOnly:true,secure:true,sameSite:"lax" as const,path:"/"};
-export type Connection={uid:string;githubId:string;login:string;token:string;expires:number};
+export type Connection={uid:string;githubId:string;login:string;token:string;expires:number;returnTo?:string};
 function key(){const s=process.env.GITHUB_APP_COOKIE_KEY;if(!s)throw new Error("GitHub connection is not configured.");return createHash("sha256").update(s).digest();}
 export function seal(value:unknown){const iv=randomBytes(12),cipher=createCipheriv("aes-256-gcm",key(),iv);const encrypted=Buffer.concat([cipher.update(JSON.stringify(value)),cipher.final()]);return Buffer.concat([iv,cipher.getAuthTag(),encrypted]).toString("base64url");}
 export function unseal<T>(value:string):T{const b=Buffer.from(value,"base64url");const decipher=createDecipheriv("aes-256-gcm",key(),b.subarray(0,12));decipher.setAuthTag(b.subarray(12,28));return JSON.parse(Buffer.concat([decipher.update(b.subarray(28)),decipher.final()]).toString());}
