@@ -44,7 +44,7 @@ begin
  insert into public.rate_events(user_id,kind) values(auth.uid(),'project_try');
  insert into public.project_click_days(project_id,day,clicks) values(target,current_date,1) on conflict(project_id,day) do update set clicks=public.project_click_days.clicks+1;
 end$$;
-revoke all on function public.record_project_try(uuid) from public;
+revoke all on function public.record_project_try(uuid) from public,anon,authenticated;
 grant execute on function public.record_project_try(uuid) to authenticated;
 create function public.builder_analytics() returns jsonb language plpgsql security definer set search_path='' as $$
 begin
