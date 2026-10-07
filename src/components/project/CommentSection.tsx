@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { WriteVerification } from "@/components/abuse/TurnstileCheck";
 import { Avatar } from "@/components/ui/Avatar";
 import { Icon } from "@/components/ui/Icon";
 import { useRouter } from "next/navigation";
@@ -58,6 +59,7 @@ export function CommentSection({ initial, total, projectId }: { initial: Comment
   return (
     <section aria-labelledby="comments">
       <h2 id="comments" className="text-xl font-bold">Comments <span className="text-muted">&middot; {total + list.length - initial.length}</span></h2>
+      <WriteVerification />
       <form onSubmit={submit} className="mt-4 flex gap-3">
         <Avatar name="You" size={34} />
         <input value={text} onChange={(e) => setText(e.target.value)} maxLength={600} placeholder="Add a comment..." aria-label="Add a comment" className="flex-1 rounded-xl border border-line bg-paper px-4 py-2.5 text-sm outline-none focus:border-olive focus:ring-2 focus:ring-[#a3b18a55]" />

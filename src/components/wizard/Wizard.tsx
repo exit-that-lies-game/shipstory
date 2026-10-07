@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { WriteVerification } from "@/components/abuse/TurnstileCheck";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { publishProject } from "@/lib/actions/publish";
@@ -56,7 +57,7 @@ export function Wizard() {
       <div className="max-w-xl">
         {step === 0 && <StepBasics d={d} set={set} />}
         {step === 1 && <StepMedia d={d} set={set} />}
-        {step === 2 && <StepReview d={d} />}
+        {step === 2 && <><StepReview d={d} /><WriteVerification /></>}
         {errors.length > 0 && <ul role="alert" className="mt-5 rounded-xl border border-[#e8b9a8] bg-[#fbeee8] p-3 text-sm text-[#9a3f25]">{errors.map((e) => <li key={e}>{e}</li>)}</ul>}
         <div className="mt-8 flex items-center gap-3">
           {step === 0 ? <Button href="/feed" variant="ghost">Cancel</Button> : <Button variant="ghost" onClick={() => setStep(step - 1)}>Back</Button>}
