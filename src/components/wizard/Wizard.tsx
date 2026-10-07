@@ -22,12 +22,13 @@ export function Wizard() {
   const [published, setPublished] = useState(false);
   const [busy, setBusy] = useState(false);
   const router = useRouter();
-  const set = (p: Partial<Draft>) => { setD((x) => ({ ...x, ...p })); setErrors([]); };
+  const set = (p: Partial<Draft>) => { setD((x) => ({ ...x, ...p, ...(x.privateSource && ("title" in p || "pitch" in p || "description" in p) ? {privateReviewed:false} : {}) })); setErrors([]); };
 
   async function publish() {
+    if (d.privateSource && !d.privateReviewed) return setErrors(["Review and approve the private-source text before publishing."]);
     if (!supabaseConfigured || !d.coverFile) return setPublished(true);
     setBusy(true);
-    const res = await publishProject({ title: d.title, pitch: d.pitch, description: d.description, tags: d.tags, demoUrl: d.demoUrl, repoUrl: d.repoUrl, cover: d.coverFile, shots: d.shotFiles });
+    const res = await publishProject({ title: d.title, pitch: d.pitch, description: d.description, tags: d.tags, demoUrl: d.demoUrl, repoUrl: d.privateSource ? "" : d.repoUrl, cover: d.coverFile, shots: d.shotFiles });
     setBusy(false);
     if (res.ok) return router.push(`/p/${res.slug}`);
     if (res.reason === "auth") return router.push("/login?next=/new");
@@ -58,7 +59,7 @@ export function Wizard() {
       <div className="max-w-xl">
         {step === 0 && <><GitHubImport apply={set}/><StepBasics d={d} set={set}/></>}
         {step === 1 && <StepMedia d={d} set={set} />}
-        {step === 2 && <><StepReview d={d} /><WriteVerification /></>}
+        {step === 2 && <><StepReview d={d} />{d.privateSource&&<label className="mt-5 flex gap-3 rounded-xl border border-line bg-paper p-4 text-sm"><input type="checkbox" checked={!!d.privateReviewed} onChange={e=>set({privateReviewed:e.target.checked})}/>I reviewed the imported private-repo text and approve publishing these project details. No private repository link or code will be shared.</label>}<WriteVerification /></>}
         {errors.length > 0 && <ul role="alert" className="mt-5 rounded-xl border border-[#e8b9a8] bg-[#fbeee8] p-3 text-sm text-[#9a3f25]">{errors.map((e) => <li key={e}>{e}</li>)}</ul>}
         <div className="mt-8 flex items-center gap-3">
           {step === 0 ? <Button href="/feed" variant="ghost">Cancel</Button> : <Button variant="ghost" onClick={() => setStep(step - 1)}>Back</Button>}

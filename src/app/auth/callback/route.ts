@@ -18,7 +18,10 @@ export async function GET(request: NextRequest) {
       },
     });
     const { data, error } = await sb.auth.exchangeCodeForSession(code);
-    if (!error && data.session) return response;
+    if (!error && data.session) {
+      if (data.session.user.app_metadata.provider === "github") response.headers.set("Location", `${origin}/api/github/connect`);
+      return response;
+    }
     // Codes are single use. A duplicated callback must not strand a session
     // which was successfully established by the first callback.
     const existing = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!, {
