@@ -1,4 +1,9 @@
+import { redirect } from "next/navigation";
+import { adminAccess } from "@/server/admin/access";
 import { getOverview } from "@/server/admin/data";
 import { PageHead } from "@/components/admin/ui";
 import { ReferencePanels } from "@/components/admin/ReferencePanels";
-export default async function Content() { const d = (await getOverview())!; return <><PageHead title="Content" sub="Banners shown above the feed." /><ReferencePanels tab="content" d={d} /></>; }
+export default async function Content() {
+  const { role } = await adminAccess(); if (role === "moderator" || !role) redirect("/admin");
+  const d = (await getOverview())!; return <><PageHead title="Content" sub="Banners shown at the top of the feed." /><ReferencePanels tab="content" d={d} /></>;
+}

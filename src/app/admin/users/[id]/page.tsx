@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { adminAccess } from "@/server/admin/access";
 import { isUuid, rpcJson, when } from "@/server/admin/data";
 import type { AdminUserDetail } from "@/shared/admin-types";
 import { Chip, Stat, card } from "@/components/admin/ui";
 import { ModerationControl } from "@/components/admin/ModerationControl";
 export default async function UserDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params; if (!isUuid(id)) notFound();
-  const d = await rpcJson<AdminUserDetail>("admin_user_detail", { uid: id }); if (!d) notFound();
+  const { role } = await adminAccess(); const d = await rpcJson<AdminUserDetail>("admin_user_detail", { uid: id }); if (!d) notFound();
   const u = d.user; const open = d.reports_against.filter(r => r.review_status === "open").length;
   return <>
     <p className="mb-3 text-xs text-muted"><Link href="/admin/users" className="underline">Users</Link> / @{u.handle}</p>
@@ -14,7 +15,7 @@ export default async function UserDetail({ params }: { params: Promise<{ id: str
       <div className="flex items-center gap-4"><div className="flex h-16 w-16 items-center justify-center rounded-full bg-sage text-2xl font-extrabold text-white">{(u.display_name || u.handle)[0].toUpperCase()}</div>
         <div><h1 className="text-2xl font-extrabold">{u.display_name || u.handle} {u.is_owner && <Chip>Owner</Chip>} {u.admin_verified && <Chip>Reviewed</Chip>} {u.suspended && <Chip tone="warn">Suspended</Chip>} {!u.suspended && u.posting_blocked && <Chip tone="warn">Posting blocked</Chip>} {open > 0 && <Chip tone="warn">{open} open report(s)</Chip>}</h1>
           <p className="mt-1 text-sm text-muted">@{u.handle} · {u.provider} login · joined {when(u.created_at)} · last seen {when(u.last_sign_in_at)}</p>{u.bio && <p className="mt-1 text-sm">{u.bio}</p>}</div></div>
-      {!u.is_owner && <div className="flex flex-wrap items-start gap-2">
+      {!u.is_owner && role !== "moderator" && <div className="flex flex-wrap items-start gap-2">
         <ModerationControl kind="builder" target={u.id} decision={u.admin_verified ? "unverify" : "verify"} label={u.admin_verified ? "Remove review badge" : "Mark reviewed"} />
         {!u.suspended && <ModerationControl kind="builder" target={u.id} decision={u.posting_blocked ? "unblock" : "block"} label={u.posting_blocked ? "Unblock posting" : "Block posting"} needReason={!u.posting_blocked} />}
         <ModerationControl kind="builder" target={u.id} decision={u.suspended ? "unsuspend" : "suspend"} label={u.suspended ? "Lift suspension" : "Suspend account"} danger={!u.suspended} needReason={!u.suspended} /></div>}
