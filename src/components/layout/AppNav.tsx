@@ -20,7 +20,7 @@ export async function AppNav({ active, q }: { active?: string; q?: string }) {
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-[#faf7edee] backdrop-blur">
       <div className="mx-auto flex h-[68px] max-w-[1400px] items-center gap-3 px-4 sm:gap-6 sm:px-5 lg:px-8">
-        <Logo />
+        <Logo href="/feed" />
         <nav className="hidden items-center gap-6 text-sm font-medium lg:flex">
           {links.map((l) => (
             <Link key={l.key} href={l.href} className={active === l.key ? "text-terracotta" : "text-muted hover:text-ink"}>{l.label}</Link>

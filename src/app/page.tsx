@@ -1,5 +1,7 @@
 import { SiteFooter } from "@/components/layout/LegalPage";
 import Image from "next/image";
+import { redirect } from "next/navigation";
+import { getAuthUser } from "@/server/supabase/server";
 import { MarketingNav } from "@/components/layout/MarketingNav";
 import { ProjectCard } from "@/components/project/ProjectCard";
 import { Button } from "@/components/ui/Button";
@@ -20,6 +22,11 @@ const steps = [
 ];
 
 export default async function Landing() {
+  // Signed-in people never see the sign-up page again: the logo and "/" lead to the feed.
+  if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
+    const { data } = await getAuthUser();
+    if (data.user) redirect("/feed");
+  }
   const [a, b, c] = landingSamples;
   return (
     <div className="bg-glow relative overflow-hidden">
