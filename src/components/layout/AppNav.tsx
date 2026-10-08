@@ -19,7 +19,7 @@ export async function AppNav({ active, q }: { active?: string; q?: string }) {
   const admin = viewer ? (await adminAccess()).allowed : false;
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-[#faf7edee] backdrop-blur">
-      <div className="mx-auto flex h-[68px] max-w-[1400px] items-center gap-6 px-5 lg:px-8">
+      <div className="mx-auto flex h-[68px] max-w-[1400px] items-center gap-3 px-4 sm:gap-6 sm:px-5 lg:px-8">
         <Logo />
         <nav className="hidden items-center gap-6 text-sm font-medium lg:flex">
           {links.map((l) => (
@@ -27,7 +27,7 @@ export async function AppNav({ active, q }: { active?: string; q?: string }) {
           ))}
         </nav>
         <div className="mx-auto hidden flex-1 justify-center md:flex"><SearchBox defaultValue={q} /></div>
-        <div className="ml-auto flex items-center gap-3 md:ml-0">
+        <div className="ml-auto flex items-center gap-1.5 sm:gap-3 md:ml-0">
           {viewer && <Link href="/analytics" className="hidden text-xs font-semibold text-olive sm:inline">Analytics</Link>}
           {admin && <Link href="/admin" className="text-xs font-semibold text-olive">Admin</Link>}
           <Link href="/search" aria-label="Search" className="grid h-9 w-9 place-items-center rounded-full text-muted hover:bg-[#e9eed9] md:hidden"><Icon name="search" /></Link>
