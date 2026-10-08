@@ -30,6 +30,7 @@ export async function AppNav({ active, q }: { active?: string; q?: string }) {
         <div className="ml-auto flex items-center gap-3 md:ml-0">
           {viewer && <Link href="/analytics" className="hidden text-xs font-semibold text-olive sm:inline">Analytics</Link>}
           {admin && <Link href="/admin" className="text-xs font-semibold text-olive">Admin</Link>}
+          <Link href="/search" aria-label="Search" className="grid h-9 w-9 place-items-center rounded-full text-muted hover:bg-[#e9eed9] md:hidden"><Icon name="search" /></Link>
           <Button href="/new" size="sm"><Icon name="plus" size={16} /><span className="hidden sm:inline">New project</span></Button>
           <Link href="/notifications" aria-label="Notifications" className="grid h-9 w-9 place-items-center rounded-full text-muted hover:bg-[#e9eed9]"><Icon name="bell" /></Link>
           {viewer ? <AccountMenu name={viewer.name}/> : <Button href="/login" size="sm" variant="ghost" className="whitespace-nowrap">Sign in</Button>}
