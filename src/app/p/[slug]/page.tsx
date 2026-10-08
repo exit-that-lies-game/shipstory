@@ -1,7 +1,7 @@
 import { ProjectUpdates } from "@/components/updates/ProjectUpdates";
 import { TryProject } from "@/components/project/TryProject";
-import { createClient } from "@/lib/supabase/server";
-import { getViewer } from "@/lib/data";
+import { createClient } from "@/server/supabase/server";
+import { getViewer } from "@/server/data";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -15,7 +15,7 @@ import { Avatar } from "@/components/ui/Avatar";
 import { Chip } from "@/components/ui/Chip";
 import { Icon } from "@/components/ui/Icon";
 import { DoodleBack } from "@/components/doodle/DoodleBack";
-import { getProfile, getProject, listComments } from "@/lib/data";
+import { getProfile, getProject, listComments } from "@/server/data";
 
 type Params = Promise<{ slug: string }>;
 

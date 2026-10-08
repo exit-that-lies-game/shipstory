@@ -1,2 +1,2 @@
-import {createClient} from "@/lib/supabase/server";
+import {createClient} from "@/server/supabase/server";
 export async function FeedAnnouncements(){const sb=await createClient();const {data}=await sb.from("announcements").select("id,title,body").order("created_at",{ascending:false}).limit(3);if(!data?.length)return null;return <div className="mb-6 space-y-3">{data.map(a=><aside key={a.id} className="rounded-2xl border border-sage bg-[#e9eed9] p-5"><h2 className="font-bold text-olive">{a.title}</h2><p className="mt-2 whitespace-pre-wrap text-sm">{a.body}</p></aside>)}</div>;}

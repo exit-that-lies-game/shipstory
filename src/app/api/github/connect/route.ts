@@ -1,8 +1,8 @@
 import { randomBytes,createHash } from "node:crypto";
 import { NextResponse } from "next/server";
-import { getAuthUser } from "@/lib/supabase/server";
-import { safeReturnPath } from "@/lib/safe-url";
-import { seal,FLOW_COOKIE,cookieOptions,expectedGitHub } from "@/lib/github-app";
+import { getAuthUser } from "@/server/supabase/server";
+import { safeReturnPath } from "@/shared/safe-url";
+import { seal,FLOW_COOKIE,cookieOptions,expectedGitHub } from "@/server/github/github-app";
 export async function GET(request:Request){
  const reqUrl=new URL(request.url),origin=reqUrl.origin,next=safeReturnPath(reqUrl.searchParams.get("next")||"/new",origin),{data}=await getAuthUser();if(!data.user)return NextResponse.redirect(`${origin}/login?next=%2Fnew`);
  if(!process.env.GITHUB_APP_CLIENT_ID||!process.env.GITHUB_APP_CLIENT_SECRET||!process.env.GITHUB_APP_COOKIE_KEY)return NextResponse.redirect(`${origin}/new?github=unavailable`);

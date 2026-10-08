@@ -1,7 +1,7 @@
 import { NextRequest,NextResponse } from "next/server";
-import { getAuthUser } from "@/lib/supabase/server";
-import { safeReturnPath } from "@/lib/safe-url";
-import { CONNECTION_COOKIE,FLOW_COOKIE,cookieOptions,seal,unseal,github,installations,expectedGitHub } from "@/lib/github-app";
+import { getAuthUser } from "@/server/supabase/server";
+import { safeReturnPath } from "@/shared/safe-url";
+import { CONNECTION_COOKIE,FLOW_COOKIE,cookieOptions,seal,unseal,github,installations,expectedGitHub } from "@/server/github/github-app";
 export async function GET(request:NextRequest){
  const {origin,searchParams}=request.nextUrl;const fail=()=>{const r=NextResponse.redirect(`${origin}/new?github=failed`);r.cookies.set(FLOW_COOKIE,"",{...cookieOptions,maxAge:0});r.headers.set("Cache-Control","private, no-store");return r;};
  try{

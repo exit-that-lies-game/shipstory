@@ -11,7 +11,7 @@ const customRequire=name=>name==='server-only'?{}:name==='next/headers'?{cookies
 const m={exports:{}};
 const env={GITHUB_APP_COOKIE_KEY:'test-only-key'};
 const context={exports:m.exports,module:m,require:customRequire,Buffer,process:{env},AbortSignal,Date,Map,Error,JSON,fetch:async url=>{calls.push(url);const value=fixtures.get(new URL(url).pathname+new URL(url).search);return {ok:!!value,status:value?200:401,json:async()=>value};}};
-vm.runInNewContext(ts.transpile(readFileSync('src/lib/github-app.ts','utf8'),{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}),context);
+vm.runInNewContext(ts.transpile(readFileSync('src/server/github/github-app.ts','utf8'),{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}),context);
 const app=m.exports;
 const token={uid:'owner',githubId:'55',login:'testowner',token:'test-only-token',expires:Date.now()+10000};
 cookie=app.seal(token);assert.equal(app.unseal(cookie).uid,'owner');

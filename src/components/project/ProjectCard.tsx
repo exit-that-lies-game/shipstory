@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Avatar } from "@/components/ui/Avatar";
 import { Icon } from "@/components/ui/Icon";
-import type { Project } from "@/lib/data";
+import type { Project } from "@/server/data";
 
 export function ProjectCard({ project, tilt = 0, showOwner = true }: { project: Project; tilt?: number; showOwner?: boolean }) {
   const host = project.demoUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");

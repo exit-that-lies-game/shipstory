@@ -1,9 +1,9 @@
 // Data access layer. Pages only import from here. Uses Supabase when configured and falls back to demo data
 // only when a query returns nothing in an unconfigured environment.
 import { comments, profiles, projects, topics } from "./mock-data";
-import { supabaseConfigured } from "../supabase/client";
+import { supabaseConfigured } from "@/lib/supabase/client";
 import { sbGetViewer, sbGetProfile, sbGetProject, sbListComments, sbListProjects, sbListRisingBuilders, sbListSaved, sbSearchBuilders } from "./supabase-source";
-import type { Comment, FeedQuery, Profile, Project, Viewer } from "./types";
+import type { Comment, FeedQuery, Profile, Project, Viewer } from "@/shared/types";
 
 export type { Comment, FeedQuery, Profile, Project, Viewer };
 

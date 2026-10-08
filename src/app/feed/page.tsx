@@ -6,7 +6,7 @@ import { FeedTabs } from "@/components/project/FeedTabs";
 import { ProjectGrid } from "@/components/project/ProjectGrid";
 import { Avatar } from "@/components/ui/Avatar";
 import { FollowButton } from "@/components/profile/FollowButton";
-import { getViewer, listProjects, listRisingBuilders, listTopics, searchBuilders } from "@/lib/data";
+import { getViewer, listProjects, listRisingBuilders, listTopics, searchBuilders } from "@/server/data";
 
 type SP = Promise<{ sort?: string; tag?: string; q?: string; view?: string }>;
 

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient as createAdmin } from "@supabase/supabase-js";
-import { createClient } from "@/lib/supabase/server";
-import { sameOrigin, verifyTurnstile } from "@/lib/abuse/turnstile";
+import { createClient } from "@/server/supabase/server";
+import { sameOrigin, verifyTurnstile } from "@/server/abuse/turnstile";
 
 export async function POST(request: Request) {
   if (!sameOrigin(request)) return NextResponse.json({ error: "Invalid request." }, { status: 403 });

@@ -1,4 +1,4 @@
-import type { Project } from "@/lib/data";
+import type { Project } from "@/server/data";
 import { ProjectCard } from "./ProjectCard";
 
 export function ProjectGrid({ projects, showOwner = true, cols = 3, empty = "Nothing here yet." }: { projects: Project[]; showOwner?: boolean; cols?: 2 | 3; empty?: string }) {

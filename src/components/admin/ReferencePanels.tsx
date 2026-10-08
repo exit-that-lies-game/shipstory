@@ -1,4 +1,4 @@
-import type {AdminData} from "@/lib/admin/types";
+import type {AdminData} from "@/shared/admin-types";
 import {ModerationControl} from "./ModerationControl";
 import {AnnouncementEditor} from "./AnnouncementEditor";
 const box="rounded-2xl border border-line bg-paper p-6";

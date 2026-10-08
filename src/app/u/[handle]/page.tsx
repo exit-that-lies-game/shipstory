@@ -6,8 +6,8 @@ import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { Icon } from "@/components/ui/Icon";
-import { getProfile, listProjects } from "@/lib/data";
-import { getAuthUser } from "@/lib/supabase/server";
+import { getProfile, listProjects } from "@/server/data";
+import { getAuthUser } from "@/server/supabase/server";
 
 export async function generateMetadata({ params }: { params: Promise<{ handle: string }> }) {
   const p = await getProfile((await params).handle);

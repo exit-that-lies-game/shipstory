@@ -4,7 +4,7 @@ import { MarketingNav } from "@/components/layout/MarketingNav";
 import { ProjectCard } from "@/components/project/ProjectCard";
 import { Button } from "@/components/ui/Button";
 import { Icon, type IconName } from "@/components/ui/Icon";
-import { projects as landingSamples } from "@/lib/data/mock-data";
+import { projects as landingSamples } from "@/server/data/mock-data";
 import { DoodleStrip } from "@/components/doodle/DoodleStrip";
 
 const perks: { icon: IconName; title: string; sub: string }[] = [

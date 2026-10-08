@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { safeReturnPath } from "@/lib/safe-url";
-import { sameOrigin, verifyTurnstile } from "@/lib/abuse/turnstile";
+import { createClient } from "@/server/supabase/server";
+import { safeReturnPath } from "@/shared/safe-url";
+import { sameOrigin, verifyTurnstile } from "@/server/abuse/turnstile";
 
 export async function POST(request: Request) {
   if (!sameOrigin(request)) { console.warn("auth/start origin mismatch", { origin: request.headers.get("origin"), url: new URL(request.url).origin }); return NextResponse.json({ error: "Invalid request." }, { status: 403 }); }

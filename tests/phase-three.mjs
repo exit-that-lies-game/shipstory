@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync } from "node:fs";
 import assert from "node:assert/strict";
 const f = (p) => readFileSync(new URL(`../${p}`, import.meta.url), "utf8");
-const src = f("src/lib/data/supabase-source.ts");
+const src = f("src/server/data/supabase-source.ts");
 // Search: every user term passes through cleanTerm before reaching a PostgREST filter.
 assert(src.includes("const term = cleanTerm(q)"));
 assert(!/\.or\(`[^`]*\$\{q\}/.test(src), "raw q in filter");

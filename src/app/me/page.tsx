@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getViewer } from "@/lib/data";
+import { getViewer } from "@/server/data";
 
 export default async function Me() {
   const viewer = await getViewer();

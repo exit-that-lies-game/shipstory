@@ -7,7 +7,7 @@ import { Icon } from "@/components/ui/Icon";
 import { useRouter } from "next/navigation";
 import { postComment, toggleCommentLike } from "@/lib/actions/comments";
 import { supabaseConfigured } from "@/lib/supabase/client";
-import type { Comment } from "@/lib/data";
+import type { Comment } from "@/shared/types";
 
 function CommentRow({ c }: { c: Comment }) {
   const router = useRouter();

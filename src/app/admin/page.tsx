@@ -3,8 +3,8 @@ import { redirect } from "next/navigation";
 import { AppNav } from "@/components/layout/AppNav";
 import { ReferencePanels } from "@/components/admin/ReferencePanels";
 import { ModerationControl } from "@/components/admin/ModerationControl";
-import { adminAccess } from "@/lib/admin/access";
-import type { AdminData } from "@/lib/admin/types";
+import { adminAccess } from "@/server/admin/access";
+import type { AdminData } from "@/shared/admin-types";
 export const dynamic = "force-dynamic";
 const tabs = ["overview","projects","reports","builders","content","analytics","payments","access"];
 export default async function Admin({searchParams}: {searchParams: Promise<{tab?: string; q?: string}>}) {

@@ -1,7 +1,7 @@
 import { AppNav } from "@/components/layout/AppNav";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { ProjectGrid } from "@/components/project/ProjectGrid";
-import { listSaved, listTopics } from "@/lib/data";
+import { listSaved, listTopics } from "@/server/data";
 
 export default async function Saved() {
   const [projects, topics] = await Promise.all([listSaved(), listTopics()]);

@@ -3,7 +3,7 @@ import { AppNav } from "@/components/layout/AppNav";
 import { ProjectGrid } from "@/components/project/ProjectGrid";
 import { Avatar } from "@/components/ui/Avatar";
 import { LiveSearchInput } from "@/components/layout/LiveSearchInput";
-import { listProjects, searchBuilders } from "@/lib/data";
+import { listProjects, searchBuilders } from "@/server/data";
 
 export const metadata = { title: "Search - ShipStory" };
 

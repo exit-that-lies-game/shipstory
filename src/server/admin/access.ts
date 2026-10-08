@@ -1,6 +1,6 @@
 import "server-only";
 import { cache } from "react";
-import { createClient, getAuthUser } from "@/lib/supabase/server";
+import { createClient, getAuthUser } from "@/server/supabase/server";
 export const adminAccess = cache(async function adminAccess() {
   const sb = await createClient();
   const { data: { user } } = await getAuthUser();

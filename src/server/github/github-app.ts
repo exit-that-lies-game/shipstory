@@ -1,8 +1,8 @@
 import "server-only";
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from "node:crypto";
 import { cookies } from "next/headers";
-import { getAuthUser } from "@/lib/supabase/server";
-import { githubIdentity } from "@/lib/github-import";
+import { getAuthUser } from "@/server/supabase/server";
+import { githubIdentity } from "@/server/github/github-import";
 export const CONNECTION_COOKIE="shipstory_github_connection";
 export const FLOW_COOKIE="shipstory_github_flow";
 export const cookieOptions={httpOnly:true,secure:true,sameSite:"lax" as const,path:"/"};

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getViewer } from "@/lib/data";
+import { getViewer } from "@/server/data";
 import { AppNav } from "@/components/layout/AppNav";
 import { Wizard } from "@/components/wizard/Wizard";
 

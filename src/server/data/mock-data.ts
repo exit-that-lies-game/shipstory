@@ -1,4 +1,4 @@
-import type { Comment, Profile, Project } from "./types";
+import type { Comment, Profile, Project } from "@/shared/types";
 
 export const profiles: Profile[] = [
   { id: "u1", handle: "balu", name: "Balamanikanta", headline: "AI-assisted builder", location: "Hyderabad", bio: "Building useful web apps for everyday people.", github: "https://github.com/balamanikantatirunagaram-lgtm", projectCount: 6, followers: 312, reactions: 1400 },

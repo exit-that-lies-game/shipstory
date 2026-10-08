@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { AccountMenu } from "./AccountMenu";
 import { SearchBox } from "./SearchBox";
-import { adminAccess } from "@/lib/admin/access";
-import { getViewer } from "@/lib/data";
+import { adminAccess } from "@/server/admin/access";
+import { getViewer } from "@/server/data";
 
 const links = [
   { href: "/feed", label: "Home", key: "home" },

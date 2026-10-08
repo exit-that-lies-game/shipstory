@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { safeReturnPath } from "@/lib/safe-url";
+import { safeReturnPath } from "@/shared/safe-url";
 
 // Keep the exchange and its cookies on one response. Do not refresh an old
 // session in the proxy while the new OAuth session is being established.

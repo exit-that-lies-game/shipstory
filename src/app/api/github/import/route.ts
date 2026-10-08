@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { sameOrigin } from "@/lib/abuse/turnstile";
-import { connection,repositories,github,type Repo } from "@/lib/github-app";
+import { sameOrigin } from "@/server/abuse/turnstile";
+import { connection,repositories,github,type Repo } from "@/server/github/github-app";
 const response=(body:unknown,status=200)=>NextResponse.json(body,{status,headers:{"Cache-Control":"private, no-store"}});
 export async function GET(){try{const c=await connection();if(!c)return response({error:"Connect GitHub to load your own public and private repositories.",connect:true},403);const d=await repositories(c);return response({login:c.login,repos:d.repos.map(r=>({id:r.id,name:r.name,private:r.private})),all:d.all,installed:d.installed,installUrl:process.env.GITHUB_APP_INSTALL_URL});}catch(e){return response({error:e instanceof Error?e.message:"Could not load GitHub.",connect:true},502);}}
 export async function POST(request:Request){
