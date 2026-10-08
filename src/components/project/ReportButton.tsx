@@ -2,20 +2,20 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui/Icon";
-import { reportProject } from "@/lib/actions/report";
+import { reportComment, reportProject } from "@/lib/actions/report";
 import { supabaseConfigured } from "@/lib/supabase/client";
 
 const REASONS = [["spam", "Spam"], ["abuse", "Abusive"], ["broken", "Broken or fake"], ["copyright", "Copyright"], ["other", "Other"]] as const;
 
-export function ReportButton({ projectId }: { projectId?: string }) {
+export function ReportButton({ projectId, commentId }: { projectId?: string; commentId?: string }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [sent, setSent] = useState(false);
 
   async function send(reason: string) {
     setOpen(false);
-    if (supabaseConfigured && projectId) {
-      const r = await reportProject(projectId, reason);
+    if (supabaseConfigured && (projectId || commentId)) {
+      const r = commentId ? await reportComment(commentId, reason) : await reportProject(projectId!, reason);
       if (r === "auth") return router.push(`/login?next=${encodeURIComponent(window.location.pathname)}`);
       if (r === "error") return;
     }

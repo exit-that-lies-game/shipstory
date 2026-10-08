@@ -2,7 +2,7 @@
 // only when a query returns nothing in an unconfigured environment.
 import { comments, profiles, projects, topics } from "./mock-data";
 import { supabaseConfigured } from "../supabase/client";
-import { sbGetViewer, sbGetProfile, sbGetProject, sbListComments, sbListProjects, sbListRisingBuilders, sbListSaved } from "./supabase-source";
+import { sbGetViewer, sbGetProfile, sbGetProject, sbListComments, sbListProjects, sbListRisingBuilders, sbListSaved, sbSearchBuilders } from "./supabase-source";
 import type { Comment, FeedQuery, Profile, Project, Viewer } from "./types";
 
 export type { Comment, FeedQuery, Profile, Project, Viewer };
@@ -49,4 +49,10 @@ export async function listTopics(): Promise<string[]> {
 export async function getViewer(): Promise<Viewer | null> {
   if (live) return sbGetViewer();
   return { id: "u1", handle: "balu", name: "Balamanikanta" };
+}
+
+export async function searchBuilders(q: string): Promise<Profile[]> {
+  if (live) return sbSearchBuilders(q);
+  const s = q.toLowerCase();
+  return profiles.filter((p) => `${p.handle} ${p.name}`.toLowerCase().includes(s)).slice(0, 6);
 }

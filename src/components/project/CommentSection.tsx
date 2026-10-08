@@ -1,4 +1,5 @@
 "use client";
+import { ReportButton } from "./ReportButton";
 import { useState } from "react";
 import { WriteVerification } from "@/components/abuse/TurnstileCheck";
 import { Avatar } from "@/components/ui/Avatar";
@@ -24,6 +25,7 @@ function CommentRow({ c }: { c: Comment }) {
       <div className="min-w-0 flex-1">
         <p className="text-sm"><b>{c.author.handle}</b> <span className="ml-1 text-xs text-muted">{new Date(c.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</span></p>
         <p className="mt-1 text-[15px] leading-relaxed text-[#3b3d2a]">{c.body}</p>
+        {!c.id.startsWith("new-") && <div className="mt-2"><ReportButton commentId={c.id} /></div>}
       </div>
       <button onClick={like} aria-pressed={liked} className={`flex h-fit items-center gap-1 text-xs font-semibold ${liked ? "text-terracotta" : "text-muted"}`}>
         <Icon name="heart" size={14} filled={liked} />{c.likes + (liked ? 1 : 0)}

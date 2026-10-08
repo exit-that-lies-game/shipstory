@@ -4,7 +4,7 @@ import { OAuthButtons } from "@/components/auth/OAuthButtons";
 export default async function Login({ searchParams }: { searchParams: Promise<{ next?: string; error?: string }> }) {
   const { next = "/feed", error } = await searchParams;
   return (
-    <main className="bg-glow grid min-h-screen place-items-center px-6">
+    <main id="main" className="bg-glow grid min-h-screen place-items-center px-6">
       <div className="w-full max-w-sm rounded-3xl border border-line bg-paper p-8 shadow-lift">
         <Logo />
         <h1 className="mt-8 text-2xl font-extrabold tracking-tight">Welcome to ShipStory</h1>

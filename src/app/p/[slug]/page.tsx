@@ -22,7 +22,7 @@ type Params = Promise<{ slug: string }>;
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const p = await getProject((await params).slug);
   if (!p) return { title: "Not found - ShipStory" };
-  return { title: `${p.title} - ShipStory`, description: p.pitch, openGraph: { title: p.title, description: p.pitch, images: [p.cover] } };
+  return { title: `${p.title} - ShipStory`, description: p.pitch, openGraph: { title: p.title, description: p.pitch }, twitter: { card: "summary_large_image", title: p.title, description: p.pitch } };
 }
 
 export default async function ProjectPage({ params }: { params: Params }) {

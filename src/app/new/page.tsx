@@ -10,7 +10,7 @@ export default async function NewProject() {
   return (
     <>
       <AppNav />
-      <main className="mx-auto max-w-[1200px] px-5 py-10 lg:px-8"><Wizard /></main>
+      <main id="main" className="mx-auto max-w-[1200px] px-5 py-10 lg:px-8"><Wizard /></main>
     </>
   );
 }

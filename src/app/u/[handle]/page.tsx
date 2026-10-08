@@ -8,6 +8,11 @@ import { Chip } from "@/components/ui/Chip";
 import { Icon } from "@/components/ui/Icon";
 import { getProfile, listProjects } from "@/lib/data";
 
+export async function generateMetadata({ params }: { params: Promise<{ handle: string }> }) {
+  const p = await getProfile((await params).handle);
+  return p ? { title: `${p.name} (@${p.handle}) - ShipStory`, description: p.bio || `Projects by ${p.name} on ShipStory.` } : { title: "Not found - ShipStory" };
+}
+
 export default async function Profile({ params }: { params: Promise<{ handle: string }> }) {
   const profile = await getProfile((await params).handle);
   if (!profile) notFound();
@@ -18,18 +23,18 @@ export default async function Profile({ params }: { params: Promise<{ handle: st
   return (
     <>
       <AppNav active="mine" />
-      <main className="mx-auto max-w-5xl px-5 py-10 lg:px-8">
+      <main id="main" className="mx-auto max-w-5xl px-5 py-10 lg:px-8">
         <div className="flex flex-wrap items-center gap-6">
           <Avatar name={profile.name} size={112} />
           <div className="min-w-0 flex-1">
             <h1 className="text-3xl font-extrabold tracking-tight">{profile.name}</h1>
-            <p className="mt-1 text-muted">@{profile.handle} &middot; {profile.headline} &middot; {profile.location}</p>
-            <p className="mt-2 text-[15px]">{profile.bio}</p>
+            <p className="mt-1 text-muted">{["@" + profile.handle, profile.headline, profile.location].filter(Boolean).join(" · ")}</p>
+            {profile.bio ? <p className="mt-2 text-[15px]">{profile.bio}</p> : <p className="mt-2 text-[15px] text-muted">No bio yet.</p>}
             <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2">{stat(profile.projectCount, "projects", "folder")}{stat(profile.followers, "followers", "users")}{stat(profile.reactions >= 1000 ? `${(profile.reactions / 1000).toFixed(1)}k` : profile.reactions, "reactions", "heart")}</div>
           </div>
-          <div className="flex gap-3"><FollowButton userId={profile.id} />{profile.github && <Button href={profile.github} variant="ghost" size="md"><Icon name="github" size={16} />GitHub</Button>}</div>
+          <div className="flex gap-3"><FollowButton userId={profile.id} />{profile.github && <Button href={profile.github} variant="ghost" size="md"><Icon name="github" size={16} />GitHub</Button>}{profile.website && <Button href={profile.website} variant="ghost" size="md">Website</Button>}</div>
         </div>
-        <div className="mb-6 mt-10 flex gap-2 border-b border-line pb-4"><Chip active>Projects</Chip><Chip>Updates</Chip><Chip>Saved</Chip></div>
+        <div className="mb-6 mt-10 flex gap-2 border-b border-line pb-4"><Chip active>Projects</Chip></div>
         <ProjectGrid projects={projects} showOwner={false} />
       </main>
     </>

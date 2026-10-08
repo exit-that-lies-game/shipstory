@@ -10,7 +10,7 @@ const tabs = ["overview","projects","reports","builders","content","analytics","
 export default async function Admin({searchParams}: {searchParams: Promise<{tab?: string; q?: string}>}) {
  const {sb,user,allowed} = await adminAccess();
  if (!user) redirect("/login?next=/admin");
- if (!allowed) return <><AppNav/><main className="mx-auto max-w-xl px-5 py-20"><h1 className="text-3xl font-extrabold">Admin access only</h1><p className="mt-3 text-muted">This account does not have access to ShipStory administration.</p><Link className="mt-5 inline-block text-terracotta" href="/feed">Back to feed</Link></main></>;
+ if (!allowed) return <><AppNav/><main id="main" className="mx-auto max-w-xl px-5 py-20"><h1 className="text-3xl font-extrabold">Admin access only</h1><p className="mt-3 text-muted">This account does not have access to ShipStory administration.</p><Link className="mt-5 inline-block text-terracotta" href="/feed">Back to feed</Link></main></>;
  const {data,error} = await sb.rpc("admin_overview");
  if (error || !data) return <><AppNav/><main className="p-10"><h1 className="text-2xl font-bold">Admin data unavailable</h1><p role="alert" className="mt-3">Refresh to try again. No changes have been made.</p></main></>;
  const d = data as AdminData; const params = await searchParams; const tab = tabs.includes(params.tab ?? "") ? params.tab! : "overview"; const q = (params.q ?? "").slice(0,100).toLowerCase();

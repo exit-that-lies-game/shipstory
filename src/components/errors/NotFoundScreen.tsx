@@ -6,7 +6,7 @@ export function NotFoundScreen() {
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden">
       <header className="mx-auto w-full max-w-[1300px] px-6 py-7 lg:px-8"><Logo /></header>
-      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 pb-20 text-center">
+      <main id="main" className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 pb-20 text-center">
         <div aria-hidden="true" className="relative mb-7 flex items-center gap-3 text-[clamp(100px,22vw,190px)] font-extrabold leading-none tracking-[-0.08em] text-olive">
           <span>4</span><span className="relative mx-1 grid h-[100px] w-[85px] place-items-center rounded-[48%] border-[3px] border-ink bg-sage/30 sm:h-[145px] sm:w-[120px]"><DoodleIcon name="eyes" size={65} /></span><span>4</span>
           <span className="absolute -right-8 -top-3 rotate-12 text-terracotta"><DoodleIcon name="spark" size={36} /></span>

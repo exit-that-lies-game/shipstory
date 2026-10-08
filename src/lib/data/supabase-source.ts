@@ -40,6 +40,9 @@ const toProject = (r: Row): Project => ({
   score: r.score ?? 0,
 });
 
+// Strips characters that have meaning inside a PostgREST filter or LIKE pattern.
+export const cleanTerm = (q?: string) => (q ?? "").replace(/[%,()*\\_"'`:;{}<>]/g, " ").replace(/\s+/g, " ").trim().slice(0, 60);
+
 const SELECT = "*, owner:profiles!projects_owner_id_fkey(id, handle, display_name)";
 
 export const sbGetViewer = cache(async function sbGetViewer(): Promise<Viewer | null> {
@@ -54,7 +57,16 @@ export async function sbListProjects({ sort = "trending", tag, q, ownerHandle, f
   const sb = await createClient();
   let query = sb.from(sort === "trending" ? "trending_projects" : "projects").select(SELECT).eq("status", "published");
   if (tag) query = query.contains("tags", [tag.toLowerCase()]);
-  if (q) query = query.textSearch("title", q, { type: "websearch" });
+  const term = cleanTerm(q);
+  if (term) {
+    const { data: owners } = await sb.from("profiles").select("id").or(`handle.ilike.%${term}%,display_name.ilike.%${term}%`).limit(30);
+    const ids = (owners ?? []).map((o: Row) => o.id);
+    const tagTerm = term.toLowerCase().replace(/[^a-z0-9 -]/g, "").trim().replace(/\s+/g, "-");
+    const parts = [`title.ilike.%${term}%`, `tagline.ilike.%${term}%`, `description.ilike.%${term}%`];
+    if (tagTerm) parts.push(`tags.cs.{${tagTerm}}`);
+    if (ids.length) parts.push(`owner_id.in.(${ids.join(",")})`);
+    query = query.or(parts.join(","));
+  }
   if (ownerHandle) {
     const { data: p } = await sb.from("profiles").select("id").eq("handle", ownerHandle).maybeSingle();
     if (!p) return [];
@@ -112,5 +124,13 @@ export async function sbListSaved(): Promise<Project[]> {
 export async function sbListRisingBuilders(): Promise<Profile[]> {
   const sb = await createClient();
   const { data } = await sb.from("profiles").select("*").order("created_at", { ascending: false }).limit(8);
+  return (data ?? []).map(toProfile);
+}
+
+export async function sbSearchBuilders(q: string): Promise<Profile[]> {
+  const term = cleanTerm(q);
+  if (!term) return [];
+  const sb = await createClient();
+  const { data } = await sb.from("profiles").select("*").or(`handle.ilike.%${term}%,display_name.ilike.%${term}%`).limit(6);
   return (data ?? []).map(toProfile);
 }

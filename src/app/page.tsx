@@ -1,3 +1,4 @@
+import { SiteFooter } from "@/components/layout/LegalPage";
 import Image from "next/image";
 import { MarketingNav } from "@/components/layout/MarketingNav";
 import { ProjectCard } from "@/components/project/ProjectCard";
@@ -24,7 +25,7 @@ export default async function Landing() {
     <div className="bg-glow relative overflow-hidden">
       <Image src="/art/leaves.jpg" alt="" width={520} height={690} priority className="pointer-events-none absolute -right-16 top-0 hidden h-[760px] w-auto mix-blend-multiply opacity-90 [mask-image:radial-gradient(closest-side,#000_55%,transparent_100%)] lg:block" />
       <MarketingNav />
-      <main>
+      <main id="main">
         <section className="relative mx-auto grid max-w-7xl items-center gap-12 px-6 pb-20 pt-10 lg:grid-cols-[1.05fr_1fr] lg:px-10 lg:pt-16">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full border border-line bg-paper px-3.5 py-1.5 text-xs font-semibold text-olive"><span className="h-1.5 w-1.5 rounded-full bg-terracotta" />Early access</span>
@@ -69,7 +70,7 @@ export default async function Landing() {
           <div className="mt-12 flex justify-center"><Button href="/feed" variant="soft" size="lg">Explore projects <Icon name="arrow" size={16} /></Button></div>
         </section>
       </main>
-      <footer className="border-t border-line py-8 text-center text-sm text-muted">ShipStory &middot; Show what you build</footer>
+      <SiteFooter />
     </div>
   );
 }
