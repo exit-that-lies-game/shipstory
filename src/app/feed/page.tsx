@@ -24,9 +24,9 @@ export default async function Feed({ searchParams }: { searchParams: SP }) {
         <main id="main" className="min-w-0 flex-1"><FeedAnnouncements/>
           <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
             <div><h1 className="text-2xl font-extrabold tracking-tight">{title}</h1><p className="text-sm text-muted">{projects.length} projects</p></div>
-            <FeedTabs sort={s} tag={tag} q={q} />
+            <FeedTabs sort={s} tag={tag} q={q} following={view === "following"} />
           </div>
-          {view === "following" && !viewer ? <p className="rounded-2xl border border-dashed border-line p-10 text-center text-muted"><Link href="/login?next=/feed%3Fview%3Dfollowing" className="font-semibold text-terracotta">Sign in</Link> to see projects from builders you follow.</p> : <ProjectGrid projects={projects} empty={q ? `No projects match "${q}". Try a tag, a builder name or fewer words.` : undefined} />}
+          {view === "following" && !viewer ? <p className="rounded-2xl border border-dashed border-line p-10 text-center text-muted"><Link href="/login?next=/feed%3Fview%3Dfollowing" className="font-semibold text-terracotta">Sign in</Link> to see projects from builders you follow.</p> : <ProjectGrid projects={projects} empty={q ? `No projects match "${q}". Try a tag, a builder name or fewer words.` : view === "following" ? "Follow builders to see their projects here. Pick some from Explore." : undefined} />}
           {q && found.length > 0 && <section aria-label="Matching builders" className="mt-10"><h2 className="mb-3 text-lg font-bold">Builders</h2><ul className="flex flex-wrap gap-3">{found.map((b) => <li key={b.id}><Link href={`/u/${b.handle}`} className="flex items-center gap-2 rounded-xl border border-line bg-paper px-3 py-2 text-sm font-semibold hover:border-olive"><Avatar name={b.name} size={28} />{b.handle}</Link></li>)}</ul></section>}
         </main>
         <aside className="hidden w-72 shrink-0 xl:block">

@@ -1,6 +1,6 @@
 import { Chip } from "@/components/ui/Chip";
 
-export function FeedTabs({ sort, tag, q }: { sort: string; tag?: string; q?: string }) {
+export function FeedTabs({ sort, tag, q, following = false }: { sort: string; tag?: string; q?: string; following?: boolean }) {
   const href = (s: string) => {
     const p = new URLSearchParams();
     p.set("sort", s);
@@ -10,9 +10,9 @@ export function FeedTabs({ sort, tag, q }: { sort: string; tag?: string; q?: str
   };
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <Chip href={href("trending")} active={sort === "trending"}>Trending</Chip>
-      <Chip href={href("latest")} active={sort === "latest"}>Latest</Chip>
-      <Chip href="/feed?view=following">Following</Chip>
+      <Chip href={href("trending")} active={!following && sort === "trending"}>Trending</Chip>
+      <Chip href={href("latest")} active={!following && sort === "latest"}>Latest</Chip>
+      <Chip href="/feed?view=following" active={following}>Following</Chip>
     </div>
   );
 }
