@@ -11,11 +11,11 @@ export function FeedTabs({ sort, tag, q, following = false, layout = "grid", cou
     if ((over.layout ?? layout) === "list") p.set("layout", "list");
     return `/feed?${p}`;
   };
-  const tab = (on: boolean) => `inline-flex items-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-semibold transition-colors ${on ? "bg-paper text-ink shadow-soft" : "text-muted hover:text-ink"}`;
+  const tab = (on: boolean) => `inline-flex shrink-0 items-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-semibold transition-colors ${on ? "bg-paper text-ink shadow-soft" : "text-muted hover:text-ink"}`;
   const sw = (on: boolean) => `grid h-10 w-10 place-items-center rounded-xl transition-colors ${on ? "bg-paper text-terracotta shadow-soft" : "text-muted hover:text-ink"}`;
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <div className="flex flex-wrap items-center gap-1.5 rounded-[20px] bg-[#f3efe0] p-1.5">
+      <div className="flex max-w-full items-center gap-1.5 overflow-x-auto rounded-[20px] bg-[#f3efe0] p-1.5 [scrollbar-width:none]">
         <Link href={href({ sort: "trending" })} className={tab(!following && sort === "trending")}>{!following && sort === "trending" && <span className="h-2.5 w-2.5 rounded-full bg-terracotta" />}Trending</Link>
         <Link href={href({ sort: "latest" })} className={tab(!following && sort === "latest")}>Latest</Link>
         <Link href={href({ following: true })} className={tab(following)}>Following</Link>

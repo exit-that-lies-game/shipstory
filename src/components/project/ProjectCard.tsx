@@ -34,7 +34,9 @@ export function ProjectCard({ project, tilt = 0, showOwner = true, layout = "gri
         </div>
         <p className="mt-1 line-clamp-2 text-[15px] font-medium text-ink/80">{project.pitch}</p>
         {project.description && <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-muted">{project.description}</p>}
+        {project.tags.length > 0 && <ul className="mt-3 flex flex-wrap gap-1.5" aria-label="Technologies">{project.tags.slice(0, 3).map((t) => <li key={t} className="rounded-full bg-sage/25 px-2.5 py-0.5 text-[11px] font-semibold text-olive">{t}</li>)}</ul>}
         {meta}
+        <span className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-terracotta px-4 py-2 text-sm font-semibold text-white transition group-hover:brightness-95 sm:w-auto">View project<Icon name="arrow" size={14} /></span>
       </div>
     </Link>
   );

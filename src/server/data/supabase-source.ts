@@ -145,10 +145,25 @@ export async function sbListSaved(): Promise<Project[]> {
   return (data ?? []).map((r: Row) => toProject(r.project)).filter(Boolean);
 }
 
+// Ranked from real activity only (no database change): published projects and their likes and comments, plus new followers in the last 30 days.
+// Builders with no activity are left out, so the panel can show an honest empty state.
 export async function sbListRisingBuilders(): Promise<Profile[]> {
   const sb = await createClient();
-  const { data } = await sb.from("profiles").select(PROFILE_COLS).order("created_at", { ascending: false }).limit(8);
-  return (data ?? []).map(toProfile);
+  const since = new Date(Date.now() - 30 * 86400000).toISOString();
+  const [{ data: projs }, { data: fols }] = await Promise.all([
+    sb.from("projects").select("owner_id, like_count, comment_count, created_at").eq("status", "published").order("created_at", { ascending: false }).limit(500),
+    sb.from("follows").select("followee_id").gte("created_at", since).limit(2000),
+  ]);
+  const agg = new Map<string, { projects: number; recent: number; engage: number; follows: number }>();
+  const get = (id: string) => { let a = agg.get(id); if (!a) { a = { projects: 0, recent: 0, engage: 0, follows: 0 }; agg.set(id, a); } return a; };
+  for (const p of projs ?? []) { const a = get(p.owner_id); a.projects++; a.engage += (p.like_count ?? 0) + (p.comment_count ?? 0); if (p.created_at >= since) a.recent++; }
+  for (const f of fols ?? []) get(f.followee_id).follows++;
+  const score = (a: { projects: number; recent: number; engage: number; follows: number }) => a.recent * 5 + a.follows * 3 + a.engage + a.projects;
+  const top = [...agg.entries()].filter(([, a]) => a.projects > 0 || a.follows > 0).sort((x, y) => score(y[1]) - score(x[1])).slice(0, 6);
+  if (!top.length) return [];
+  const { data } = await sb.from("profiles").select(PROFILE_COLS).in("id", top.map(([id]) => id));
+  const byId = new Map((data ?? []).map((r: Row) => [r.id, r]));
+  return top.flatMap(([id, a]) => { const r = byId.get(id); return r ? [{ ...toProfile(r), projectCount: a.projects, followers: a.follows }] : []; });
 }
 
 export async function sbSearchBuilders(q: string): Promise<Profile[]> {
