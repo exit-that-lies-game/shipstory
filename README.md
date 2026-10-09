@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ShipStory
 
-## Getting Started
+A place for makers to share what they ship. Post a project with screenshots, follow other makers, like and save the work you enjoy.
 
-First, run the development server:
+Live: https://shipstory-xi.vercel.app
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Stack
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Next.js (App Router) and React, Tailwind CSS
+- Supabase for auth, Postgres and row level security
+- Cloudflare R2 for media storage
+- Cloudflare Turnstile for signup protection
+- Vercel for hosting
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Local setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Install dependencies: `npm install`
+2. Copy your environment values into `.env.local` (names only, never commit values):
+   - `NEXT_PUBLIC_SITE_URL`
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+   - `SUPABASE_SECRET_KEY` (server only)
+   - `NEXT_PUBLIC_MEDIA_BACKEND`
+   - `R2_PUBLIC_BASE_URL`
+   - `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`, `TURNSTILE_HOSTNAMES`
+   - `GITHUB_APP_CLIENT_ID`, `GITHUB_APP_CLIENT_SECRET`, `GITHUB_APP_COOKIE_KEY`, `GITHUB_APP_INSTALL_URL` (optional, GitHub import)
+3. Apply the SQL files in `supabase/migrations` in order to your Supabase project.
+4. Start the dev server: `npm run dev` and open http://localhost:3000
 
-## Learn More
+## Scripts
 
-To learn more about Next.js, take a look at the following resources:
+- `npm run dev` - development server
+- `npm run build` - production build
+- `npm run start` - run the production build
+- `npm run lint` - lint
+- `npm test` - run the standalone checks in `tests/`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Source layout
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `src/app` - routes and pages
+- `supabase/migrations` - database schema and policies
+- `tests` - security, backend boundary, GitHub import privacy and admin checks
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT. See [LICENSE](LICENSE).
