@@ -1,7 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
+import { supabaseConfigured } from "@/lib/supabase/client";
 import { createClient } from "@/server/supabase/server";
 export async function FeedAnnouncements() {
+  if (!supabaseConfigured) return null;
   const sb = await createClient();
   const { data } = await sb.from("announcements").select("id,title,body,image_url,link_url").order("created_at", { ascending: false }).limit(3);
   if (!data?.length) return null;

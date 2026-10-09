@@ -1,8 +1,8 @@
 import { Icon } from "@/components/ui/Icon";
 
-export function SearchBox({ defaultValue = "" }: { defaultValue?: string }) {
+export function SearchBox({ defaultValue = "", wide = false }: { defaultValue?: string; wide?: boolean }) {
   return (
-    <form action="/feed" className="relative w-full max-w-md">
+    <form action="/feed" className={`relative w-full ${wide ? "max-w-2xl" : "max-w-md"}`}>
       <Icon name="search" size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
       <input
         name="q"

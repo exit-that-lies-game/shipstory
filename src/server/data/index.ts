@@ -2,7 +2,7 @@
 // only when a query returns nothing in an unconfigured environment.
 import { comments, profiles, projects, topics } from "./mock-data";
 import { supabaseConfigured } from "@/lib/supabase/client";
-import { sbGetViewer, sbGetProfile, sbGetProject, sbListComments, sbListProjects, sbListRisingBuilders, sbListSaved, sbSearchBuilders } from "./supabase-source";
+import { sbGetViewer, sbGetProfile, sbProjectGate, sbListAccess, type ProjectGate, type AccessPerson, sbGetProject, sbListComments, sbListProjects, sbListRisingBuilders, sbListSaved, sbSearchBuilders } from "./supabase-source";
 import type { Comment, FeedQuery, Profile, Project, Viewer } from "@/shared/types";
 
 export type { Comment, FeedQuery, Profile, Project, Viewer };
@@ -55,4 +55,15 @@ export async function searchBuilders(q: string): Promise<Profile[]> {
   if (live) return sbSearchBuilders(q);
   const s = q.toLowerCase();
   return profiles.filter((p) => `${p.handle} ${p.name}`.toLowerCase().includes(s)).slice(0, 6);
+}
+
+export type { ProjectGate, AccessPerson };
+
+export async function getProjectGate(slug: string): Promise<ProjectGate | null> {
+  if (live) return sbProjectGate(slug);
+  return slug === "private-demo" ? { visibility: "private", owner_id: "u2", owner_handle: "ravi" } : slug === "followers-demo" ? { visibility: "followers", owner_id: "u2", owner_handle: "ravi" } : null;
+}
+
+export async function listAccess(projectId: string): Promise<AccessPerson[]> {
+  return live ? sbListAccess(projectId) : projectId === "p1" ? [{ id: "u2", handle: "ravi", name: "Ravi" }, { id: "u3", handle: "sri", name: "Sri" }] : [];
 }

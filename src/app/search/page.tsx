@@ -20,7 +20,7 @@ export default async function Search({ searchParams }: { searchParams: Promise<{
             <section aria-label="Builders" aria-live="polite" className="mt-8">
               <h2 className="mb-3 text-lg font-bold">Builders</h2>
               {builders.length === 0 ? <p className="text-sm text-muted">No builders match &ldquo;{q}&rdquo;.</p> : (
-                <ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">{builders.map((b) => <li key={b.id}><Link href={`/u/${b.handle}`} className="flex items-center gap-3 rounded-xl border border-line bg-paper px-3 py-2 hover:border-olive"><Avatar name={b.name} size={36} /><span className="min-w-0"><b className="block truncate text-sm">{b.name}</b><span className="block truncate text-xs text-muted">@{b.handle}</span></span></Link></li>)}</ul>
+                <ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">{builders.map((b) => <li key={b.id}><Link href={`/u/${b.handle}`} className="flex items-center gap-3 rounded-xl border border-line bg-paper px-3 py-2 hover:border-olive"><Avatar src={b.avatarUrl} name={b.name} size={36} /><span className="min-w-0"><b className="block truncate text-sm">{b.name}</b><span className="block truncate text-xs text-muted">@{b.handle}</span></span></Link></li>)}</ul>
               )}
             </section>
             <section aria-label="Projects" className="mt-8">

@@ -1,5 +1,6 @@
 import { Avatar } from "@/components/ui/Avatar";
 import { Icon } from "@/components/ui/Icon";
+import { VisibilityBadge } from "@/components/visibility/VisibilityBadge";
 import type { Draft } from "./types";
 
 export function PreviewCard({ d }: { d: Draft }) {
@@ -11,6 +12,7 @@ export function PreviewCard({ d }: { d: Draft }) {
         <div className="relative aspect-[16/10] bg-gradient-to-br from-sage/60 to-[#e9eed9]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           {d.coverPreview && <img src={d.coverPreview} alt="Cover preview" className="h-full w-full object-cover" />}
+          <VisibilityBadge v={d.visibility} className="absolute right-3 top-3" />
           <span className="absolute bottom-3 left-3 rounded-md bg-[#faf7edeb] px-2.5 py-1 font-mono text-[11px]">{host}</span>
         </div>
         <div className="p-4">

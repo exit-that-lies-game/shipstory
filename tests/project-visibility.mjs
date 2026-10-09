@@ -1,0 +1,53 @@
+import {PGlite} from '@electric-sql/pglite';
+import fs from 'fs';
+const db=new PGlite();
+await db.exec(`create role anon; create role authenticated;create schema auth;
+create table auth.users(id uuid primary key);
+create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
+create table public.profiles(id uuid primary key references auth.users,handle text);
+create table public.projects(id uuid primary key,owner_id uuid references profiles,slug text,title text,status text,moderated_hidden boolean default false,created_at timestamptz default now(),like_count int default 0,save_count int default 0,comment_count int default 0);
+create table public.follows(follower_id uuid references profiles,followee_id uuid references profiles);
+create table public.comments(id uuid primary key,project_id uuid references projects,author_id uuid references profiles,body text default 'x');
+create table public.reactions(user_id uuid,project_id uuid references projects);
+create table public.comment_likes(user_id uuid,comment_id uuid references comments);
+create function public.can_contribute() returns boolean language sql as $$ select true $$;
+create function public.has_verified_session() returns boolean language sql as $$select true$$;
+create table public.rate_events(user_id uuid,kind text,created_at timestamptz default now());
+create function public.rate_limit() returns trigger language plpgsql as $$begin return new;end$$;
+grant usage on schema public,auth to anon,authenticated;grant select on profiles,projects,follows,comments,reactions,comment_likes to anon,authenticated;
+alter table projects enable row level security;alter table comments enable row level security;alter table reactions enable row level security;alter table comment_likes enable row level security;
+create policy "published readable" on projects for select using(status='published' or owner_id=auth.uid());
+create policy "comments read" on comments for select using(true);create policy "reactions read" on reactions for select using(true);create policy "clikes read" on comment_likes for select using(true);
+create policy "moderated projects unavailable" on public.projects as restrictive for select using(not moderated_hidden);`);
+await db.exec(fs.readFileSync('supabase/migrations/0012_phase_two.sql','utf8'));
+await db.exec(fs.readFileSync('supabase/migrations/0017_project_visibility.sql','utf8'));
+const U=n=>`aaaaaaaa-0000-4000-8000-00000000000${n}`,P=n=>`bbbbbbbb-0000-4000-8000-00000000000${n}`;
+const [owner,fol,picked,stranger]=[1,2,3,4].map(U);
+await db.exec(`insert into auth.users values('${owner}'),('${fol}'),('${picked}'),('${stranger}');insert into profiles values('${owner}','owner'),('${fol}','fol'),('${picked}','picked'),('${stranger}','stranger');
+insert into projects(id,owner_id,slug,title,status,visibility) values('${P(1)}','${owner}','pub','Pub','published','public'),('${P(2)}','${owner}','fo','Fo','published','followers'),('${P(3)}','${owner}','pr','Pr','published','private');
+insert into follows values('${fol}','${owner}');insert into project_access(project_id,user_id) values('${P(3)}','${picked}');
+insert into comments(id,project_id,author_id) values('cccccccc-0000-4000-8000-000000000001','${P(3)}','${owner}');`);
+let pass=0;async function check(name,fn){await fn();console.log('PASS',name);pass++;}
+async function slugs(uid){await db.exec(`begin;set local role ${uid?'authenticated':'anon'};${uid?`select set_config('request.jwt.claim.sub','${uid}',true);`:''}`);const r=await db.query('select slug from projects order by slug');const c=await db.query('select count(*)::int n from comments');await db.exec('rollback');return [r.rows.map(x=>x.slug).join(','),c.rows[0].n];}
+const eq=(a,b)=>{if(JSON.stringify(a)!==JSON.stringify(b))throw Error(JSON.stringify(a)+' != '+JSON.stringify(b));};
+await check('anon sees public only',async()=>eq(await slugs(null),['pub',0]));
+await check('stranger sees public only',async()=>eq(await slugs(stranger),['pub',0]));
+await check('follower sees public+followers',async()=>eq(await slugs(fol),['fo,pub',0]));
+await check('picked account sees public+private and comments',async()=>eq(await slugs(picked),['pr,pub',1]));
+await check('owner sees all',async()=>eq(await slugs(owner),['fo,pr,pub',1]));
+await check('gate: stranger gets lock info for private',async()=>{await db.exec(`begin;set local role authenticated;select set_config('request.jwt.claim.sub','${stranger}',true);`);const r=await db.query(`select project_gate('pr') g,project_gate('pub') p,project_gate('nope') n`);await db.exec('rollback');if(r.rows[0].g.visibility!=='private'||r.rows[0].p!==null||r.rows[0].n!==null)throw Error('gate');});
+await check('gate: picked gets null',async()=>{await db.exec(`begin;set local role authenticated;select set_config('request.jwt.claim.sub','${picked}',true);`);const r=await db.query(`select project_gate('pr') g`);await db.exec('rollback');if(r.rows[0].g!==null)throw Error('gate');});
+async function as(uid,sql){return db.exec(`begin;set local role authenticated;select set_config('request.jwt.claim.sub','${uid}',true);${sql};commit;`);}
+async function denied(uid,sql){try{await as(uid,sql);throw Error('allowed');}catch(e){await db.exec('rollback');if(String(e)==='Error: allowed')throw e;}}
+await check('stranger cannot grant access',()=>denied(stranger,`insert into project_access(project_id,user_id) values('${P(3)}','${stranger}')`));
+await check('owner cannot grant self',()=>denied(owner,`insert into project_access(project_id,user_id) values('${P(3)}','${owner}')`));
+await check('owner grants and revokes',async()=>{await as(owner,`insert into project_access(project_id,user_id) values('${P(3)}','${stranger}')`);eq(await slugs(stranger),['pr,pub',1]);await as(owner,`delete from project_access where project_id='${P(3)}' and user_id='${stranger}'`);eq(await slugs(stranger),['pub',0]);});
+await check('stranger cannot read access list',async()=>{await db.exec(`begin;set local role authenticated;select set_config('request.jwt.claim.sub','${stranger}',true);`);const r=await db.query('select count(*)::int n from project_access');await db.exec('rollback');if(r.rows[0].n!==0)throw Error('leak');});
+await check('stranger cannot delete access',async()=>{await db.exec(`begin;set local role authenticated;select set_config('request.jwt.claim.sub','${stranger}',true);delete from project_access;commit;`);const r=await db.query('select count(*)::int n from project_access');if(r.rows[0].n!==1)throw Error('deleted');});
+await check('access list capped at 50',async()=>{for(let i=0;i<60;i++)await db.exec(`insert into auth.users values('dddddddd-0000-4000-8000-0000000001${String(i).padStart(2,'0')}');insert into profiles values('dddddddd-0000-4000-8000-0000000001${String(i).padStart(2,'0')}','x${i}')`);let ok=0,bad=0;for(let i=0;i<60;i++){try{await db.exec(`insert into project_access(project_id,user_id) values('${P(3)}','dddddddd-0000-4000-8000-0000000001${String(i).padStart(2,'0')}')`);ok++;}catch{bad++;}}if(ok!==49||bad!==11)throw Error(ok+' '+bad);await db.exec(`delete from project_access where user_id::text like 'dddddddd%'`);});
+await check('private update notifies only picked; followers-only notifies followers',async()=>{await as(owner,`insert into project_updates(project_id,author_id,title,body) values('${P(3)}','${owner}','a','b'),('${P(2)}','${owner}','c','d')`);const r=await db.query(`select recipient_id,project_id from notifications where kind='update' order by project_id`);eq(r.rows.map(x=>x.recipient_id.slice(-1)+x.project_id.slice(-1)),['22','33']);});
+await check('private updates hidden from stranger',async()=>{await db.exec(`begin;set local role authenticated;select set_config('request.jwt.claim.sub','${stranger}',true);`);const r=await db.query('select count(*)::int n from project_updates');await db.exec('rollback');if(r.rows[0].n!==0)throw Error('leak');});
+await check('stranger try tap on private not counted',async()=>{await as(stranger,`select record_project_try('${P(3)}')`);const r=await db.query('select count(*)::int n from project_click_days');if(r.rows[0].n!==0)throw Error('counted');});
+await check('moderation hide still wins for picked user',async()=>{await db.exec(`update projects set moderated_hidden=true where id='${P(3)}'`);eq(await slugs(picked),['pub',0]);});
+await check('default visibility public + bad value rejected',async()=>{await db.exec(`insert into projects(id,owner_id,slug,title,status) values('${P(9)}','${owner}','d','D','published')`);const r=await db.query(`select visibility from projects where id='${P(9)}'`);if(r.rows[0].visibility!=='public')throw Error('default');try{await db.exec(`update projects set visibility='x' where id='${P(9)}'`);throw Error('allowed');}catch(e){if(String(e)==='Error: allowed')throw e;}});
+console.log('TOTAL',pass);await db.close();

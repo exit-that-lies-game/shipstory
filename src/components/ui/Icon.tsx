@@ -12,6 +12,8 @@ const paths: Record<string, string> = {
   search: "M11 18a7 7 0 100-14 7 7 0 000 14zM20 20l-4-4",
   play: "M8 5v14l11-7L8 5z",
   external: "M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 01-1 1H5a1 1 0 01-1-1V7a1 1 0 011-1h5",
+  list: "M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01",
+  lock: "M6 11h12v9H6v-9zM8.5 11V8a3.5 3.5 0 017 0v3",
   bolt: "M13 2L4 14h7l-1 8 9-12h-7l1-8z",
   plus: "M12 5v14M5 12h14",
   comment: "M4 5h16v11H9l-5 4V5z",

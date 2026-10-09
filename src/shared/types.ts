@@ -2,6 +2,7 @@ export type Profile = {
   id: string;
   handle: string;
   name: string;
+  avatarUrl?: string;
   bio: string;
   headline: string;
   location: string;
@@ -12,7 +13,10 @@ export type Profile = {
   reactions: number;
 };
 
+export type Visibility = "public" | "followers" | "private";
+
 export type Project = {
+  visibility?: Visibility;
   id: string;
   slug: string;
   title: string;
@@ -24,7 +28,7 @@ export type Project = {
   screenshots: string[];
   tags: string[];
   stack: string[];
-  owner: Pick<Profile, "id" | "handle" | "name">;
+  owner: Pick<Profile, "id" | "handle" | "name" | "avatarUrl">;
   likes: number;
   saves: number;
   comments: number;
@@ -49,4 +53,4 @@ export type FeedQuery = {
   followingOf?: string;
 };
 
-export type Viewer = { id: string; handle: string; name: string };
+export type Viewer = { id: string; handle: string; name: string; avatarUrl?: string; suspended?: boolean };

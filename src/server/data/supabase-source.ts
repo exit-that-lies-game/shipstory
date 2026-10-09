@@ -1,15 +1,23 @@
 import { cache } from "react";
 import { safeHttpUrl } from "@/shared/safe-url";
 import { createClient, getAuthUser } from "../supabase/server";
+import { r2Config } from "../storage/r2";
 import type { Comment, FeedQuery, Profile, Project, Viewer } from "@/shared/types";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = Record<string, any>;
 
+// Only images we host ourselves are ever shown as a profile photo, so nobody can point an avatar at another site.
+export function safeAvatar(url: unknown): string | undefined {
+  const base = r2Config()?.publicBase;
+  return base && typeof url === "string" && url.startsWith(base + "/") && url.length < 300 ? url : undefined;
+}
+
 const toProfile = (r: Row): Profile => ({
   id: r.id,
   handle: r.handle,
   name: r.display_name ?? r.handle,
+  avatarUrl: safeAvatar(r.avatar_url),
   bio: r.bio ?? "",
   headline: "",
   location: "",
@@ -32,25 +40,27 @@ const toProject = (r: Row): Project => ({
   screenshots: r.screenshots ?? [],
   tags: r.tags ?? [],
   stack: [],
-  owner: { id: r.owner?.id ?? r.owner_id, handle: r.owner?.handle ?? "", name: r.owner?.display_name ?? r.owner?.handle ?? "" },
+  owner: { id: r.owner?.id ?? r.owner_id, handle: r.owner?.handle ?? "", name: r.owner?.display_name ?? r.owner?.handle ?? "", avatarUrl: safeAvatar(r.owner?.avatar_url) },
   likes: r.like_count,
   saves: r.save_count,
   comments: r.comment_count,
   createdAt: r.created_at,
   score: r.score ?? 0,
+  visibility: r.visibility ?? "public",
 });
 
 // Strips characters that have meaning inside a PostgREST filter or LIKE pattern.
 export const cleanTerm = (q?: string) => (q ?? "").replace(/[%,()*\\_"'`:;{}<>]/g, " ").replace(/\s+/g, " ").trim().slice(0, 60);
 
-const SELECT = "*, owner:profiles!projects_owner_id_fkey(id, handle, display_name)";
+const PROFILE_COLS = "id, handle, display_name, bio, avatar_url, links, created_at";
+const SELECT = "*, owner:profiles!projects_owner_id_fkey(id, handle, display_name, avatar_url)";
 
 export const sbGetViewer = cache(async function sbGetViewer(): Promise<Viewer | null> {
   const sb = await createClient();
   const { data } = await getAuthUser();
   if (!data.user) return null;
-  const { data: p } = await sb.from("profiles").select("id, handle, display_name").eq("id", data.user.id).maybeSingle();
-  return p ? { id: p.id, handle: p.handle, name: p.display_name ?? p.handle } : null;
+  const { data: p } = await sb.from("profiles").select("id, handle, display_name, avatar_url, suspended").eq("id", data.user.id).maybeSingle();
+  return p ? { id: p.id, handle: p.handle, name: p.display_name ?? p.handle, avatarUrl: safeAvatar(p.avatar_url), suspended: !!p.suspended } : null;
 });
 
 export async function sbListProjects({ sort = "trending", tag, q, ownerHandle, followingOf }: FeedQuery = {}): Promise<Project[]> {
@@ -89,9 +99,23 @@ export async function sbGetProject(slug: string): Promise<Project | null> {
   return data ? toProject(data) : null;
 }
 
+export type ProjectGate = { visibility: "followers" | "private"; owner_id: string; owner_handle: string };
+export async function sbProjectGate(slug: string): Promise<ProjectGate | null> {
+  const sb = await createClient();
+  const { data } = await sb.rpc("project_gate", { project_slug: slug });
+  return data ?? null;
+}
+
+export type AccessPerson = { id: string; handle: string; name: string };
+export async function sbListAccess(projectId: string): Promise<AccessPerson[]> {
+  const sb = await createClient();
+  const { data } = await sb.from("project_access").select("user:profiles!project_access_user_id_fkey(id, handle, display_name)").eq("project_id", projectId).order("granted_at");
+  return (data ?? []).map((r: Row) => ({ id: r.user.id, handle: r.user.handle, name: r.user.display_name ?? r.user.handle }));
+}
+
 export async function sbGetProfile(handle: string): Promise<Profile | null> {
   const sb = await createClient();
-  const { data } = await sb.from("profiles").select("*").eq("handle", handle).maybeSingle();
+  const { data } = await sb.from("profiles").select(PROFILE_COLS).eq("handle", handle).maybeSingle();
   if (!data) return null;
   const [{ count: projectCount }, { count: followers }] = await Promise.all([
     sb.from("projects").select("id", { count: "exact", head: true }).eq("owner_id", data.id).eq("status", "published"),
@@ -123,7 +147,7 @@ export async function sbListSaved(): Promise<Project[]> {
 
 export async function sbListRisingBuilders(): Promise<Profile[]> {
   const sb = await createClient();
-  const { data } = await sb.from("profiles").select("*").order("created_at", { ascending: false }).limit(8);
+  const { data } = await sb.from("profiles").select(PROFILE_COLS).order("created_at", { ascending: false }).limit(8);
   return (data ?? []).map(toProfile);
 }
 
@@ -131,6 +155,6 @@ export async function sbSearchBuilders(q: string): Promise<Profile[]> {
   const term = cleanTerm(q);
   if (!term) return [];
   const sb = await createClient();
-  const { data } = await sb.from("profiles").select("*").or(`handle.ilike.%${term}%,display_name.ilike.%${term}%`).limit(6);
+  const { data } = await sb.from("profiles").select(PROFILE_COLS).or(`handle.ilike.%${term}%,display_name.ilike.%${term}%`).limit(6);
   return (data ?? []).map(toProfile);
 }

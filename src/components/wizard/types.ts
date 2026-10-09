@@ -1,4 +1,8 @@
+import type { Visibility } from "@/shared/types";
+
 export type Draft = {
+  visibility: Visibility;
+  accessHandles: string[];
   privateSource?: boolean;
   privateReviewed?: boolean;
   title: string;
@@ -13,7 +17,7 @@ export type Draft = {
   shotFiles: File[];
 };
 
-export const emptyDraft: Draft = { title: "", pitch: "", description: "", tags: [], demoUrl: "", repoUrl: "", coverPreview: null, shotPreviews: [], shotFiles: [] };
+export const emptyDraft: Draft = { visibility: "public", accessHandles: [], title: "", pitch: "", description: "", tags: [], demoUrl: "", repoUrl: "", coverPreview: null, shotPreviews: [], shotFiles: [] };
 
 export const TAG_SUGGESTIONS = ["Web", "Mobile", "AI", "Games", "Dev tools", "Music", "Education", "Design"];
 

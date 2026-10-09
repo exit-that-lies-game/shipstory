@@ -1,8 +1,10 @@
 import { safeHttpUrl } from "@/shared/safe-url";
 import { createClient } from "../supabase/client";
 import { currentUserId } from "./auth";
+import { findHandle, grantAccess } from "./visibility";
+import type { Visibility } from "@/shared/types";
 
-export type PublishInput = { title: string; pitch: string; description: string; tags: string[]; demoUrl: string; repoUrl: string; cover: File; shots: File[] };
+export type PublishInput = { title: string; pitch: string; description: string; tags: string[]; demoUrl: string; repoUrl: string; cover: File; shots: File[]; visibility?: Visibility; accessHandles?: string[] };
 export type PublishResult = { ok: true; slug: string } | { ok: false; reason: "auth" | "limit" | "error"; message?: string };
 
 const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "project";
@@ -48,6 +50,15 @@ export async function publishProject(input: PublishInput): Promise<PublishResult
     if (!safeHttpUrl(input.demoUrl) || (input.repoUrl && !safeHttpUrl(input.repoUrl))) return { ok: false, reason: "error", message: "Use an http or https project link." };
     if (input.shots.length > 6 || ![input.cover, ...input.shots].every(f => ["image/png", "image/jpeg", "image/webp"].includes(f.type))) return { ok: false, reason: "error", message: "Use PNG, JPG or WebP images, up to 6 screenshots." };
     if (input.cover.size > 5 * 1024 * 1024 || input.shots.some((f) => f.size > 5 * 1024 * 1024)) return { ok: false, reason: "error", message: "Images must be 5 MB or smaller." };
+    const visibility: Visibility = input.visibility ?? "public";
+    const people: string[] = [];
+    if (visibility === "private") {
+      for (const h of input.accessHandles ?? []) {
+        const f = await findHandle(h);
+        if (!f) return { ok: false, reason: "error", message: `No builder with the handle @${h.replace(/^@/, "")}.` };
+        if (f.id !== uid) people.push(f.id);
+      }
+    }
     const files = [input.cover, ...input.shots];
     const sb = createClient();
     const uploaded: string[] = [];
@@ -73,14 +84,16 @@ export async function publishProject(input: PublishInput): Promise<PublishResult
       }
     }
     const slug = `${slugify(input.title)}-${Math.random().toString(36).slice(2, 6)}`;
-    const { error } = await createClient().from("projects").insert({
+    const { data: row, error } = await createClient().from("projects").insert({
       slug, owner_id: uid, title: input.title.trim(), tagline: input.pitch.trim(), description: input.description.trim(),
-      live_url: input.demoUrl, repo_url: input.repoUrl || null, tags: input.tags.map((t) => t.toLowerCase()), cover_url: cover, screenshots: shots,
-    });
+      live_url: input.demoUrl, repo_url: input.repoUrl || null, tags: input.tags.map((t) => t.toLowerCase()), cover_url: cover, screenshots: shots, visibility,
+    }).select("id").single();
     if (error) {
       if (useR2) await removeFromR2(uploaded); else await sb.storage.from("project-media").remove(uploaded);
       return { ok: false, reason: error.message.includes("Rate limit") ? "limit" : "error", message: error.message };
     }
+    // Private is only safe once the list is saved. If a grant fails the project stays visible to its owner only.
+    for (const id of people) await grantAccess(row.id, id);
     return { ok: true, slug };
   } catch (e) {
     return { ok: false, reason: "error", message: e instanceof Error ? e.message : "Upload failed" };
