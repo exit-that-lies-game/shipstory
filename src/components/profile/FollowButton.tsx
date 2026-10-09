@@ -19,10 +19,10 @@ export function FollowButton({ compact = false, userId }: { compact?: boolean; u
     else if (r !== next) setOn(r);
   }
 
-  const size = compact ? "px-3 py-1 text-xs" : "px-5 py-2.5 text-sm";
-  const tone = on ? "border border-olive bg-[#e9eed9] text-olive" : compact ? "border border-line bg-paper text-ink hover:border-sage" : "bg-terracotta text-white hover:bg-[#ad4d30]";
+  const size = compact ? "px-2.5 py-1 text-[10px]" : "px-5 py-2.5 text-xs";
+  const tone = on ? "border border-ink bg-sage text-ink" : compact ? "border border-line bg-paper text-ink hover:bg-sage hover:border-ink" : "border border-ink bg-ink text-paper hover:border-terracotta hover:bg-terracotta";
   return (
-    <button onClick={toggle} aria-pressed={on} className={`inline-flex items-center gap-1.5 rounded-xl font-semibold transition-colors ${size} ${tone}`}>
+    <button onClick={toggle} aria-pressed={on} className={`inline-flex items-center gap-1.5 font-mono font-semibold uppercase tracking-[0.08em] transition-colors ${size} ${tone}`}>
       {on ? <><Icon name="check" size={14} />Following</> : <>{!compact && <Icon name="plus" size={14} />}Follow</>}
     </button>
   );

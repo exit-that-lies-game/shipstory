@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --cream: #faf7ed;
-  --paper: #fffdf6;
-  --ink: #2b2d1f;
-  --muted: #6b6d58;
-  --line: #e6e0cc;
-  --terracotta: #c15a3a;
-  --sage: #a3b18a;
-  --olive: #556b2f;
+  --cream: #f1eee5;
+  --paper: #fbfaf6;
+  --ink: #171714;
+  --muted: #686961;
+  --line: #d5d0c3;
+  --terracotta: #ef5b3d;
+  --sage: #c8ef75;
+  --olive: #244232;
 }
 
 @theme inline {
@@ -31,16 +31,11 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
-::selection { background: #a3b18a66; }
-.shadow-soft { box-shadow: 0 1px 0 #fff inset, 0 10px 30px -14px #556b2f33, 0 2px 6px -2px #2b2d1f14; }
-.shadow-lift { box-shadow: 0 24px 50px -22px #556b2f55, 0 4px 12px -4px #2b2d1f1a; }
-.bg-glow { background: radial-gradient(60% 50% at 20% 0%, #a3b18a40, transparent 70%), radial-gradient(40% 40% at 90% 20%, #c15a3a14, transparent 70%); }
-@keyframes floaty { 0%,100% { transform: translateY(0) rotate(var(--r,0deg)); } 50% { transform: translateY(-6px) rotate(var(--r,0deg)); } }
-.floaty { animation: floaty 7s ease-in-out infinite; }
-@media (prefers-reduced-motion: reduce) { .floaty { animation: none; } }
-
-/* paper grain, like the doodle reference */
-body::before {
-  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: .35; mix-blend-mode: multiply;
-  background-image: url("/grain.svg");
-}
+::selection { background: #c8ef75; color: #171714; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.shadow-soft { box-shadow: 0 6px 18px -10px #17171433; }
+.shadow-lift { box-shadow: 0 14px 30px -14px #17171455; }
+.bg-glow { background-image: linear-gradient(#d5d0c366 1px, transparent 1px), linear-gradient(90deg, #d5d0c366 1px, transparent 1px); background-size: 48px 48px; }
+.label-mono { font-family: var(--font-mono); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .12em; }
+.story-serif { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-weight: 400; letter-spacing: -.02em; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }

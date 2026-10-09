@@ -6,7 +6,7 @@ export function StepBasics({ d, set }: { d: Draft; set: (p: Partial<Draft>) => v
   const toggle = (t: string) => set({ tags: d.tags.includes(t) ? d.tags.filter((x) => x !== t) : [...d.tags, t].slice(0, 5) });
   return (
     <div className="space-y-5">
-      <div><h2 className="text-xl font-bold">Basic information</h2><p className="text-sm text-muted">Tell us about your project.</p></div>
+      <div><h2 className="text-2xl font-extrabold tracking-[-0.03em]">Basic information</h2><p className="text-sm text-muted">Tell us about your project.</p></div>
       <Field label="Project name"><input className={inputCls} value={d.title} maxLength={60} onChange={(e) => set({ title: e.target.value })} placeholder="Sravana" /></Field>
       <Field label="One-line pitch" hint={`${d.pitch.length}/80`}><input className={inputCls} value={d.pitch} maxLength={80} onChange={(e) => set({ pitch: e.target.value })} placeholder="Free local music player. No ads." /></Field>
       <Field label="Short description"><textarea className={`${inputCls} min-h-28 resize-y`} value={d.description} maxLength={600} onChange={(e) => set({ description: e.target.value })} placeholder="What it does and who it is for." /></Field>

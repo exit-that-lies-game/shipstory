@@ -12,7 +12,7 @@ export default async function UserDetail({ params }: { params: Promise<{ id: str
   return <>
     <p className="mb-3 text-xs text-muted"><Link href="/admin/users" className="underline">Users</Link> / @{u.handle}</p>
     <div className={`${card} mb-5 flex flex-wrap items-center justify-between gap-4`}>
-      <div className="flex items-center gap-4"><div className="flex h-16 w-16 items-center justify-center rounded-full bg-sage text-2xl font-extrabold text-white">{(u.display_name || u.handle)[0].toUpperCase()}</div>
+      <div className="flex items-center gap-4"><div className="flex h-16 w-16 items-center justify-center bg-sage text-2xl font-extrabold text-paper">{(u.display_name || u.handle)[0].toUpperCase()}</div>
         <div><h1 className="text-2xl font-extrabold">{u.display_name || u.handle} {u.is_owner && <Chip>Owner</Chip>} {u.admin_verified && <Chip>Reviewed</Chip>} {u.suspended && <Chip tone="warn">Suspended</Chip>} {!u.suspended && u.posting_blocked && <Chip tone="warn">Posting blocked</Chip>} {open > 0 && <Chip tone="warn">{open} open report(s)</Chip>}</h1>
           <p className="mt-1 text-sm text-muted">@{u.handle} · {u.provider} login · joined {when(u.created_at)} · last seen {when(u.last_sign_in_at)}</p>{u.bio && <p className="mt-1 text-sm">{u.bio}</p>}</div></div>
       {!u.is_owner && role !== "moderator" && <div className="flex flex-wrap items-start gap-2">

@@ -20,11 +20,11 @@ function CommentRow({ c }: { c: Comment }) {
     if (r === "auth") { setLiked(false); router.push(`/login?next=${encodeURIComponent(window.location.pathname)}`); }
   }
   return (
-    <li className="flex gap-3 rounded-2xl border border-line bg-paper p-4">
+    <li className="flex gap-3 border border-line bg-paper p-4">
       <Avatar name={c.author.name} size={34} />
       <div className="min-w-0 flex-1">
         <p className="text-sm"><b>{c.author.handle}</b> <span className="ml-1 text-xs text-muted">{new Date(c.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</span></p>
-        <p className="mt-1 text-[15px] leading-relaxed text-[#3b3d2a]">{c.body}</p>
+        <p className="mt-1 text-[15px] leading-relaxed text-ink/85">{c.body}</p>
         {!c.id.startsWith("new-") && <div className="mt-2"><ReportButton commentId={c.id} /></div>}
       </div>
       <button onClick={like} aria-pressed={liked} className={`flex h-fit items-center gap-1 text-xs font-semibold ${liked ? "text-terracotta" : "text-muted"}`}>
@@ -64,8 +64,8 @@ export function CommentSection({ initial, total, projectId }: { initial: Comment
       <WriteVerification />
       <form onSubmit={submit} className="mt-4 flex gap-3">
         <Avatar name="You" size={34} />
-        <input value={text} onChange={(e) => setText(e.target.value)} maxLength={600} placeholder="Add a comment..." aria-label="Add a comment" className="flex-1 rounded-xl border border-line bg-paper px-4 py-2.5 text-sm outline-none focus:border-olive focus:ring-2 focus:ring-[#a3b18a55]" />
-        <button className="rounded-xl bg-terracotta px-4 text-sm font-semibold text-white hover:bg-[#ad4d30] disabled:opacity-40" disabled={!text.trim()}>Post</button>
+        <input value={text} onChange={(e) => setText(e.target.value)} maxLength={600} placeholder="Add a comment..." aria-label="Add a comment" className="flex-1 border border-line bg-paper px-4 py-2.5 text-sm outline-none focus:border-olive focus:ring-2 focus:ring-[#a3b18a55]" />
+        <button className=" bg-terracotta px-4 text-sm font-semibold text-paper hover:bg-terracotta disabled:opacity-40" disabled={!text.trim()}>Post</button>
       </form>
       {note && <p className="mt-2 text-xs text-terracotta">{note}</p>}
       <ul className="mt-4 space-y-3">{list.map((c) => <CommentRow key={c.id} c={c} />)}</ul>

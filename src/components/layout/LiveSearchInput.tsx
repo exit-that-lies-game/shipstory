@@ -19,7 +19,7 @@ export function LiveSearchInput({ initial }: { initial: string }) {
   return (
     <form action="/search" role="search" className="relative">
       <Icon name="search" size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
-      <input name="q" value={v} onChange={(e) => setV(e.target.value)} autoFocus={!initial} autoComplete="off" enterKeyHint="search" placeholder="Search projects, tags, builders..." aria-label="Search projects and builders" className="w-full rounded-xl border border-line bg-paper py-3 pl-11 pr-4 text-base outline-none placeholder:text-[#9a9b86] focus:border-olive focus:ring-2 focus:ring-[#a3b18a55]" />
+      <input name="q" value={v} onChange={(e) => setV(e.target.value)} autoFocus={!initial} autoComplete="off" enterKeyHint="search" placeholder="Search projects, tags, builders..." aria-label="Search projects and builders" className="w-full border border-line bg-paper py-3 pl-11 pr-4 text-base outline-none placeholder:text-muted focus:border-ink focus:ring-1 focus:ring-ink" />
     </form>
   );
 }

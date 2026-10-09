@@ -74,7 +74,7 @@ export function AvatarUpload({ name, current }: { name: string; current?: string
             <button type="button" disabled={busy} onClick={() => input.current?.click()} className="text-terracotta hover:underline disabled:opacity-50">{busy ? "Saving..." : url ? "Change photo" : "Add photo"}</button>
             {url && !busy && <button type="button" onClick={remove} className="text-muted hover:underline">Remove</button>}
           </div>
-          {note && <p role="alert" className="max-w-[160px] text-center text-xs text-[#9a3f25]">{note}</p>}
+          {note && <p role="alert" className="max-w-[160px] text-center text-xs text-terracotta">{note}</p>}
         </>
       )}
     </div>

@@ -22,7 +22,7 @@ export function OwnerVisibility({ projectId, initial, people: initialPeople }: {
     if (err) { setV(prev); setNote(err); } else { setNote("Saved."); router.refresh(); }
   }
   return (
-    <section className="mt-5 rounded-2xl border border-line bg-paper p-5 shadow-soft" aria-label="Project visibility">
+    <section className="mt-5 border border-line bg-paper p-5 " aria-label="Project visibility">
       <VisibilityOptions value={v} onChange={change} disabled={busy} people={people}
         onAdd={async (h) => {
           const f = supabaseConfigured ? await findHandle(h) : { id: h, handle: h };

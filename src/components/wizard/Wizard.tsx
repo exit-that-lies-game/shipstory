@@ -44,8 +44,8 @@ export function Wizard() {
 
   if (published) {
     return (
-      <div className="mx-auto max-w-md rounded-3xl border border-line bg-paper p-10 text-center shadow-lift">
-        <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-[#e9eed9] text-olive"><Icon name="check" size={26} /></span>
+      <div className="mx-auto max-w-md border border-line bg-paper p-10 text-center ">
+        <span className="mx-auto grid h-14 w-14 place-items-center bg-sage/30 text-olive"><Icon name="check" size={26} /></span>
         <h2 className="mt-5 text-2xl font-extrabold">Ready to ship</h2>
         <p className="mt-2 text-sm text-muted">Preview build: publishing is not connected to the database yet.</p>
         <Button href="/feed" className="mt-6">Back to feed</Button>
@@ -55,12 +55,12 @@ export function Wizard() {
 
   return (
     <div className="grid gap-10 lg:grid-cols-[200px_minmax(0,1fr)_380px]">
-      <div><h1 className="mb-6 text-2xl font-extrabold tracking-tight">New project</h1><Stepper step={step} /></div>
+      <div><p className="label-mono text-terracotta">Open a new record</p><h1 className="mb-6 mt-2 text-4xl font-extrabold leading-[0.95] tracking-[-0.05em]">New <span className="story-serif text-terracotta">project.</span></h1><Stepper step={step} /></div>
       <div className="max-w-xl">
         {step === 0 && <><GitHubImport apply={set}/><StepBasics d={d} set={set}/></>}
         {step === 1 && <StepMedia d={d} set={set} />}
-        {step === 2 && <><StepReview d={d} set={set} />{d.privateSource&&<label className="mt-5 flex gap-3 rounded-xl border border-line bg-paper p-4 text-sm"><input type="checkbox" checked={!!d.privateReviewed} onChange={e=>set({privateReviewed:e.target.checked})}/>I reviewed the imported private-repo text and approve publishing these project details. No private repository link or code will be shared.</label>}<WriteVerification /></>}
-        {errors.length > 0 && <ul role="alert" className="mt-5 rounded-xl border border-[#e8b9a8] bg-[#fbeee8] p-3 text-sm text-[#9a3f25]">{errors.map((e) => <li key={e}>{e}</li>)}</ul>}
+        {step === 2 && <><StepReview d={d} set={set} />{d.privateSource&&<label className="mt-5 flex gap-3 border border-line bg-paper p-4 text-sm"><input type="checkbox" checked={!!d.privateReviewed} onChange={e=>set({privateReviewed:e.target.checked})}/>I reviewed the imported private-repo text and approve publishing these project details. No private repository link or code will be shared.</label>}<WriteVerification /></>}
+        {errors.length > 0 && <ul role="alert" className="mt-5 border border-ink bg-terracotta/15 p-3 text-sm text-terracotta">{errors.map((e) => <li key={e}>{e}</li>)}</ul>}
         <div className="mt-8 flex items-center gap-3">
           {step === 0 ? <Button href="/feed" variant="ghost">Cancel</Button> : <Button variant="ghost" onClick={() => setStep(step - 1)}>Back</Button>}
           <Button onClick={next} disabled={busy}>{busy ? "Publishing..." : step === 2 ? "Publish project" : "Continue"}{step < 2 && <Icon name="arrow" size={15} />}</Button>

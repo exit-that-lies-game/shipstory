@@ -28,8 +28,8 @@ export function ReportButton({ projectId, commentId }: { projectId?: string; com
         <Icon name="flag" size={13} />{sent ? "Reported, thanks" : "Report"}
       </button>
       {open && (
-        <ul className="absolute bottom-7 left-0 z-10 w-44 rounded-xl border border-line bg-paper p-1 shadow-lift">
-          {REASONS.map(([k, label]) => <li key={k}><button onClick={() => send(k)} className="w-full rounded-lg px-3 py-2 text-left text-sm hover:bg-[#e9eed9]">{label}</button></li>)}
+        <ul className="absolute bottom-7 left-0 z-10 w-44 border border-line bg-paper p-1 ">
+          {REASONS.map(([k, label]) => <li key={k}><button onClick={() => send(k)} className="w-full px-3 py-2 text-left text-sm hover:bg-sage/30">{label}</button></li>)}
         </ul>
       )}
     </div>

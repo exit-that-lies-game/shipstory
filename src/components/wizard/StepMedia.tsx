@@ -13,7 +13,7 @@ export function StepMedia({ d, set }: { d: Draft; set: (p: Partial<Draft>) => vo
       <p className="text-sm text-muted">Your media allowance is 20 images, up to 100 MiB. Uploads are public once stored.</p>
       <div>
         <span className="mb-1.5 block text-sm font-semibold">Cover image</span>
-        <label className="flex h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-line bg-paper text-sm text-muted transition-colors hover:border-sage focus-within:outline-2 focus-within:outline-offset-4 focus-within:outline-olive">
+        <label className="flex h-32 cursor-pointer flex-col items-center justify-center gap-2 border-2 border-dashed border-line bg-paper text-sm text-muted transition-colors hover:border-sage focus-within:outline-2 focus-within:outline-offset-4 focus-within:outline-olive">
           <Icon name="upload" size={20} />{d.coverPreview ? "Cover added. Click to replace." : "Click to upload (JPG, PNG or WebP, max 5 MiB)"}
           <input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={(e) => onCover(e.target.files?.[0])} />
         </label>
@@ -23,9 +23,9 @@ export function StepMedia({ d, set }: { d: Draft; set: (p: Partial<Draft>) => vo
         <div className="flex flex-wrap gap-3">
           {d.shotPreviews.map((s) => (
             // eslint-disable-next-line @next/next/no-img-element
-            <img key={s} src={s} alt="Screenshot preview" className="h-16 w-24 rounded-lg border border-line object-cover" />
+            <img key={s} src={s} alt="Screenshot preview" className="h-16 w-24 border border-line object-cover" />
           ))}
-          <label className="grid h-16 w-24 cursor-pointer place-items-center rounded-lg border-2 border-dashed border-line text-muted hover:border-sage focus-within:outline-2 focus-within:outline-offset-4 focus-within:outline-olive"><Icon name="plus" /><input type="file" multiple accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={(e) => onShots(e.target.files)} /></label>
+          <label className="grid h-16 w-24 cursor-pointer place-items-center border-2 border-dashed border-line text-muted hover:border-sage focus-within:outline-2 focus-within:outline-offset-4 focus-within:outline-olive"><Icon name="plus" /><input type="file" multiple accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={(e) => onShots(e.target.files)} /></label>
         </div>
       </div>
     </div>

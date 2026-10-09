@@ -19,7 +19,7 @@ export function ProjectActions({ likes, title, projectId }: { likes: number; sav
     if (res === "auth") { set(cur); router.push(`/login?next=${encodeURIComponent(window.location.pathname)}`); }
     else if (res !== !cur) set(cur);
   }
-  const btn = "flex flex-1 items-center justify-center gap-2 rounded-xl border border-line bg-paper px-3 py-2.5 text-sm font-semibold transition-colors hover:border-sage";
+  const btn = "flex flex-1 items-center justify-center gap-2  border border-line bg-paper px-3 py-2.5 text-sm font-semibold transition-colors hover:border-sage";
 
   async function share() {
     const url = window.location.href;

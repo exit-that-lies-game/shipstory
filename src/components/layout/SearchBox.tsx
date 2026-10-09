@@ -9,9 +9,9 @@ export function SearchBox({ defaultValue = "", wide = false }: { defaultValue?: 
         defaultValue={defaultValue}
         placeholder="Search projects, tags, builders..."
         aria-label="Search projects"
-        className="w-full rounded-xl border border-line bg-paper py-2.5 pl-10 pr-10 text-sm outline-none placeholder:text-[#9a9b86] focus:border-olive focus:ring-2 focus:ring-[#a3b18a55]"
+        className="w-full border border-line bg-paper py-2.5 pl-10 pr-10 text-sm outline-none placeholder:text-muted focus:border-ink focus:ring-1 focus:ring-ink"
       />
-      <kbd className="absolute right-3 top-1/2 hidden -translate-y-1/2 rounded border border-line px-1.5 text-[11px] text-muted sm:block">/</kbd>
+      <kbd className="absolute right-3 top-1/2 hidden -translate-y-1/2 border border-line px-1.5 font-mono text-[11px] text-muted sm:block">/</kbd>
     </form>
   );
 }

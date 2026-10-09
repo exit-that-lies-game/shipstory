@@ -16,7 +16,7 @@ export default async function Reports({ searchParams }: { searchParams: Promise<
       {r.comment_body && <blockquote className="mt-3 border-l-2 border-sage pl-3 text-sm">{r.comment_body}</blockquote>}
       <p className="mt-3 whitespace-pre-wrap text-sm">{r.details || "No extra details."}</p>
       <div className="mt-4 flex flex-wrap items-start gap-3">
-        {r.project_id && <Link href={`/admin/projects/${r.project_id}`} className="rounded-lg border border-line bg-paper px-3 py-2 text-xs font-semibold text-olive">Open project</Link>}
+        {r.project_id && <Link href={`/admin/projects/${r.project_id}`} className=" border border-line bg-paper px-3 py-2 text-xs font-semibold text-olive">Open project</Link>}
         {r.review_status === "open" ? <><ModerationControl kind="report" target={r.id} decision="resolved" label="Resolve" danger /><ModerationControl kind="report" target={r.id} decision="dismissed" label="Dismiss" /></> : <ModerationControl kind="report" target={r.id} decision="open" label="Reopen" />}
         {(r.comment_id || r.project_id) && <><ModerationControl kind={r.comment_id ? "comment" : "project"} target={(r.comment_id || r.project_id)!} decision="hide" label="Hide content" /><ModerationControl kind={r.comment_id ? "comment" : "project"} target={(r.comment_id || r.project_id)!} decision="restore" label="Restore content" /></>}
       </div></article>)}{!list.length && <Empty label={s === "open" ? "No open reports. A little breathing room." : "Nothing here."} />}</div>

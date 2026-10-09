@@ -22,15 +22,15 @@ export function OAuthButtons({ next = "/feed" }: { next?: string }) {
     } catch { setError("Could not connect. Check your connection and try again."); setBusy(null); }
   }
 
-  const base = "inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-3 text-base font-semibold transition-colors disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-olive";
+  const base = "inline-flex w-full items-center justify-center gap-2 px-6 py-3.5 font-mono text-xs font-semibold uppercase tracking-[0.08em] transition-colors disabled:opacity-60";
   return (
     <div className="space-y-3">
       <p className="text-center text-xs text-muted">GitHub sign-in continues through read-only repository permission and repository selection. No code access or edits.</p>
       <TurnstileCheck key={attempt} action="login" onToken={setToken} />
-      <button disabled={!!busy || !token} onClick={() => go("github")} className={`${base} bg-terracotta text-white hover:bg-[#a84b2f]`}>
+      <button disabled={!!busy || !token} onClick={() => go("github")} className={`${base} border border-ink bg-ink text-paper hover:border-terracotta hover:bg-terracotta`}>
         <Icon name="github" size={18} />{busy === "github" ? "Redirecting..." : "Continue with GitHub"}
       </button>
-      <button disabled={!!busy || !token} onClick={() => go("google")} className={`${base} border border-line bg-paper hover:border-sage`}>
+      <button disabled={!!busy || !token} onClick={() => go("google")} className={`${base} border border-ink bg-paper hover:bg-sage`}>
         <Icon name="google" size={18} />{busy === "google" ? "Redirecting..." : "Continue with Google"}
       </button>
       {error && <p role="alert" className="text-center text-sm text-terracotta">{error}</p>}

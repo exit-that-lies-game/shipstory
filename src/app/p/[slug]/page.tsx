@@ -51,14 +51,15 @@ export default async function ProjectPage({ params }: { params: Params }) {
         <div className="min-w-0">
           <DoodleBack href="/feed" label="Back to feed" />
           <ScreenshotGallery images={project.screenshots.length ? project.screenshots : [project.cover]} title={project.title} host={host} />
-          <section className="mt-10"><h2 className="text-xl font-bold">About</h2><p className="mt-2 max-w-3xl leading-relaxed text-[#4a4c38]">{project.description}</p></section>
+          <section className="mt-10 border-t border-ink pt-5"><h2 className="label-mono text-terracotta">About this build</h2><p className="mt-3 max-w-3xl text-lg leading-relaxed text-ink/80">{project.description}</p></section>
           <ProjectUpdates projectId={project.id} owner={viewer?.id===project.owner.id} initial={updateResult.data??[]}/>
           <div className="mt-10"><CommentSection initial={comments} total={project.comments} projectId={project.id} /></div>
         </div>
         <aside className="lg:sticky lg:top-[92px] lg:self-start">
           <VisibilityBadge v={project.visibility} className="mb-3" />
-          <h1 className="text-4xl font-extrabold tracking-[-0.03em]">{project.title}</h1>
-          <p className="mt-2 text-[17px] leading-relaxed text-muted">{project.pitch}</p>
+          <p className="label-mono mb-2 text-terracotta">Dispatch · {new Date(project.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</p>
+          <h1 className="text-5xl font-extrabold leading-[0.95] tracking-[-0.06em]">{project.title}</h1>
+          <p className="mt-3 text-[17px] leading-relaxed text-muted">{project.pitch}</p>
           <div className="mt-5 flex items-center gap-3">
             <Avatar name={project.owner.name} src={project.owner.avatarUrl} size={34} />
             <Link href={`/u/${project.owner.handle}`} className="font-semibold hover:text-terracotta">{project.owner.handle}</Link>
@@ -72,8 +73,8 @@ export default async function ProjectPage({ params }: { params: Params }) {
             {project.stack.map((t) => <Chip key={t}>{t}</Chip>)}
             {project.repoUrl && <a href={project.repoUrl} target="_blank" rel="noopener noreferrer"><Chip><Icon name="code" size={13} />Repo</Chip></a>}
           </div>
-          <div className="mt-5 rounded-2xl border border-line bg-paper p-5 shadow-soft">
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-[#9a9b86]">Project stats</p>
+          <div className="mt-5 border border-ink bg-paper p-5">
+            <p className="label-mono text-muted">Project stats</p>
             <dl className="mt-3 space-y-2.5 text-sm">
               <div className="flex justify-between"><dt>Reactions</dt><dd className="font-bold">{project.likes}</dd></div>
               <div className="flex justify-between"><dt>Saves</dt><dd className="font-bold">{project.saves}</dd></div>

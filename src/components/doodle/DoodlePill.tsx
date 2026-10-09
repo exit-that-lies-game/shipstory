@@ -47,7 +47,7 @@ export function DoodlePill({ icon, label, hint }: { icon: DoodleName; label: str
       onMouseEnter={wobble}
       onFocus={wobble}
       onClick={hit}
-      className="group relative inline-flex shrink-0 items-center gap-3 rounded-full border border-[#d9cfa8] bg-[#e4dab4] px-6 py-3 text-ink shadow-[0_6px_0_-2px_#cdbf8a] transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-0.5"
+      className="group relative inline-flex shrink-0 items-center gap-3 border border-line bg-line px-6 py-3 text-ink shadow-[0_6px_0_-2px_#cdbf8a] transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-0.5"
       aria-label={hint ? `${label}: ${hint}` : label}
     >
       <DoodleIcon name={icon} size={38} />
