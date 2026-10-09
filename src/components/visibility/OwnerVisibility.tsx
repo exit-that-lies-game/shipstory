@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { VisibilityOptions, type Person } from "./VisibilityOptions";
-import { findHandle, grantAccess, revokeAccess, setVisibility } from "@/lib/actions/visibility";
+import { searchHandles, findHandle, grantAccess, revokeAccess, setVisibility } from "@/lib/actions/visibility";
 import { supabaseConfigured } from "@/lib/supabase/client";
 import type { Visibility } from "@/shared/types";
 
@@ -33,6 +33,7 @@ export function OwnerVisibility({ projectId, initial, people: initialPeople }: {
           setPeople((x) => [...x, { key: f.id, handle: f.handle }]);
           return null;
         }}
+        onSearch={supabaseConfigured ? searchHandles : async (q: string) => { const t = q.replace(/^@/, "").toLowerCase(); return ["ravi", "sri", "sandeep", "meera", "arjun"].filter((x) => x.startsWith(t)).map((x) => ({ handle: x, name: x })); }}
         onRemove={async (k) => { const err = supabaseConfigured ? await revokeAccess(projectId, k) : null; if (err) setNote(err); else setPeople((x) => x.filter((p) => p.key !== k)); }} />
       <p aria-live="polite" className="mt-2 text-xs text-muted">{note}</p>
     </section>

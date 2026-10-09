@@ -24,3 +24,16 @@ export async function revokeAccess(projectId: string, userId: string): Promise<s
   const { error } = await createClient().from("project_access").delete().eq("project_id", projectId).eq("user_id", userId);
   return error ? "Could not remove that person. Try again." : null;
 }
+
+export type Suggestion = { handle: string; name: string };
+
+// Existing builders only, matched by the start of their handle as you type. Never includes yourself.
+export async function searchHandles(q: string): Promise<Suggestion[]> {
+  const term = q.replace(/^@/, "").toLowerCase().replace(/[^a-z0-9_]/g, "");
+  const sb = createClient();
+  const { data: auth } = await sb.auth.getUser();
+  let query = sb.from("profiles").select("handle, display_name").ilike("handle", `${term}%`).order("handle").limit(8);
+  if (auth.user) query = query.neq("id", auth.user.id);
+  const { data } = await query;
+  return (data ?? []).map((r: { handle: string; display_name: string | null }) => ({ handle: r.handle, name: r.display_name ?? r.handle }));
+}

@@ -1,6 +1,6 @@
 import { Chip } from "@/components/ui/Chip";
 import { VisibilityOptions, VISIBILITY_LABEL } from "@/components/visibility/VisibilityOptions";
-import { findHandle } from "@/lib/actions/visibility";
+import { findHandle, searchHandles } from "@/lib/actions/visibility";
 import { supabaseConfigured } from "@/lib/supabase/client";
 import type { Draft } from "./types";
 
@@ -17,7 +17,8 @@ export function StepReview({ d, set }: { d: Draft; set: (p: Partial<Draft>) => v
           set({ accessHandles: [...d.accessHandles, h] });
           return null;
         }}
-        onRemove={(k) => set({ accessHandles: d.accessHandles.filter((x) => x !== k) })} />
+        onRemove={(k) => set({ accessHandles: d.accessHandles.filter((x) => x !== k) })}
+        onSearch={supabaseConfigured ? searchHandles : async (q: string) => { const t = q.replace(/^@/, "").toLowerCase(); return ["ravi", "sri", "sandeep", "meera", "arjun"].filter((x) => x.startsWith(t)).map((x) => ({ handle: x, name: x })); }} />
       <div className="flex flex-wrap gap-2">{d.tags.map((t) => <Chip key={t} active>{t}</Chip>)}</div>
     </div>
   );
