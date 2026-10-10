@@ -29,8 +29,8 @@ export async function AppNav({ active, q, bare = false }: { active?: string; q?:
         </nav>}
         <div className={`mx-auto hidden flex-1 justify-center md:flex ${bare ? "max-w-2xl" : ""}`}><SearchBox defaultValue={q} wide={bare} /></div>
         <div className="ml-auto flex items-center gap-1.5 sm:gap-3 md:ml-0">
-          {viewer && <Link href="/analytics" className="label-mono hidden text-olive hover:text-terracotta sm:inline">Analytics</Link>}
-          {admin && <Link href="/admin" className="label-mono text-olive hover:text-terracotta">Admin</Link>}
+          {viewer && <Link href="/analytics" className="label-mono hidden text-ink hover:text-terracotta sm:inline">Analytics</Link>}
+          {admin && <Link href="/admin" className="label-mono text-ink hover:text-terracotta">Admin</Link>}
           <Link href="/search" aria-label="Search" className="grid h-9 w-9 place-items-center border border-transparent text-ink hover:border-ink md:hidden"><Icon name="search" /></Link>
           {!viewer?.suspended && <Button href="/new" size="sm"><Icon name="plus" size={16} /><span className="hidden sm:inline">New project</span></Button>}
           <Link href="/notifications" aria-label="Notifications" className="grid h-9 w-9 place-items-center border border-transparent text-ink hover:border-ink"><Icon name="bell" /></Link>

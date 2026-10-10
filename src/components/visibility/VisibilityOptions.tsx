@@ -54,7 +54,7 @@ export function VisibilityOptions({ value, onChange, people, onAdd, onRemove, on
     <fieldset disabled={disabled} className="space-y-2">
       <legend className="mb-2 text-sm font-semibold">Who can see this project</legend>
       {(["public", "followers", "private"] as Visibility[]).map((v) => (
-        <label key={v} className={`flex cursor-pointer items-start gap-3  border p-3.5 text-sm transition-colors ${value === v ? "border-olive bg-sage/30" : "border-line bg-paper hover:border-sage"}`}>
+        <label key={v} className={`flex cursor-pointer items-start gap-3  border p-3.5 text-sm transition-colors ${value === v ? "border-ink bg-sage/30" : "border-line bg-paper hover:border-sage"}`}>
           <input type="radio" name="visibility" className="mt-1 accent-olive" checked={value === v} onChange={() => onChange(v)} />
           <span><b className="flex items-center gap-1.5">{v !== "public" && <Icon name="lock" size={14} />}{VISIBILITY_LABEL[v]}</b><span className="text-muted">{HELP[v]}</span></span>
         </label>

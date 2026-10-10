@@ -18,13 +18,13 @@ export default async function Search({ searchParams }: { searchParams: Promise<{
         {!q ? <p className="mt-8 text-center text-muted">Type a project, tag or builder name.</p> : (
           <>
             <section aria-label="Builders" aria-live="polite" className="mt-8">
-              <h2 className="mb-3 text-lg font-bold">Builders</h2>
+              <h2 className="label-mono mb-3 border-b border-ink pb-2">Builders</h2>
               {builders.length === 0 ? <p className="text-sm text-muted">No builders match &ldquo;{q}&rdquo;.</p> : (
-                <ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">{builders.map((b) => <li key={b.id}><Link href={`/u/${b.handle}`} className="flex items-center gap-3 border border-line bg-paper px-3 py-2 hover:border-olive"><Avatar src={b.avatarUrl} name={b.name} size={36} /><span className="min-w-0"><b className="block truncate text-sm">{b.name}</b><span className="block truncate text-xs text-muted">@{b.handle}</span></span></Link></li>)}</ul>
+                <ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">{builders.map((b) => <li key={b.id}><Link href={`/u/${b.handle}`} className="flex items-center gap-3 border border-line bg-paper px-3 py-2 hover:border-ink"><Avatar src={b.avatarUrl} name={b.name} size={36} /><span className="min-w-0"><b className="block truncate text-sm">{b.name}</b><span className="block truncate text-xs text-muted">@{b.handle}</span></span></Link></li>)}</ul>
               )}
             </section>
             <section aria-label="Projects" className="mt-8">
-              <h2 className="mb-3 text-lg font-bold">Projects</h2>
+              <h2 className="label-mono mb-3 border-b border-ink pb-2">Projects</h2>
               <ProjectGrid projects={projects} empty={`No projects match "${q}". Try a tag, a builder name or fewer words.`} />
             </section>
           </>

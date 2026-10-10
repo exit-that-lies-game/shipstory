@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-const tones = ["bg-ink text-paper", "bg-terracotta text-paper", "bg-olive text-paper", "bg-sage text-ink"];
+const tones = ["bg-ink text-paper", "bg-terracotta text-paper", "bg-ink text-paper", "bg-sage text-ink"];
 
 // Shows the profile photo when there is one, otherwise the first letter. The photo URL is vetted in the data layer.
 export function Avatar({ name, size = 28, src }: { name: string; size?: number; src?: string }) {

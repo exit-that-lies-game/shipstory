@@ -5,7 +5,6 @@ import { FollowButton } from "@/components/profile/FollowButton";
 import { AvatarUpload } from "@/components/profile/AvatarUpload";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
-import { Chip } from "@/components/ui/Chip";
 import { Icon } from "@/components/ui/Icon";
 import { getProfile, listProjects } from "@/server/data";
 import { getAuthUser } from "@/server/supabase/server";
@@ -22,7 +21,7 @@ export default async function Profile({ params }: { params: Promise<{ handle: st
   const isMe = !!auth.user && auth.user.id === profile.id;
   const projects = await listProjects({ ownerHandle: profile.handle });
   const stat = (n: string | number, l: string, icon: "folder" | "users" | "heart") => (
-    <span className="flex items-center gap-2 text-sm text-muted"><Icon name={icon} size={16} /><b className="text-ink">{n}</b>{l}</span>
+    <span className="label-mono flex items-center gap-2 text-muted"><Icon name={icon} size={15} /><b className="text-base normal-case tracking-normal text-ink">{n}</b>{l}</span>
   );
   return (
     <>
@@ -31,14 +30,14 @@ export default async function Profile({ params }: { params: Promise<{ handle: st
         <div className="flex flex-col gap-5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-6">
           {isMe ? <AvatarUpload name={profile.name} current={profile.avatarUrl} /> : <Avatar name={profile.name} src={profile.avatarUrl} size={96} />}
           <div className="min-w-0 flex-1">
-            <h1 className="break-words text-2xl font-extrabold tracking-tight sm:text-3xl">{profile.name}</h1>
+            <p className="label-mono text-terracotta">Builder</p><h1 className="mt-1 break-words text-4xl font-extrabold leading-none tracking-[-0.05em] sm:text-5xl">{profile.name}</h1>
             <p className="mt-1 break-all text-muted sm:break-normal">{["@" + profile.handle, profile.headline, profile.location].filter(Boolean).join(" · ")}</p>
             {profile.bio ? <p className="mt-2 text-[15px]">{profile.bio}</p> : <p className="mt-2 text-[15px] text-muted">No bio yet.</p>}
             <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2">{stat(profile.projectCount, "projects", "folder")}{stat(profile.followers, "followers", "users")}{stat(profile.reactions >= 1000 ? `${(profile.reactions / 1000).toFixed(1)}k` : profile.reactions, "reactions", "heart")}</div>
           </div>
           <div className="flex flex-wrap gap-3">{!isMe && <FollowButton userId={profile.id} />}{profile.github && <Button href={profile.github} variant="ghost" size="md"><Icon name="github" size={16} />GitHub</Button>}{profile.website && <Button href={profile.website} variant="ghost" size="md">Website</Button>}</div>
         </div>
-        <div className="mb-6 mt-10 flex gap-2 border-b border-line pb-4"><Chip active>Projects</Chip></div>
+        <div className="mb-6 mt-10 flex items-center justify-between border-b border-ink pb-3"><span className="label-mono">Projects · {String(projects.length).padStart(2, "0")}</span></div>
         <ProjectGrid projects={projects} showOwner={false} />
       </main>
     </>

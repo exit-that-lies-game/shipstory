@@ -45,7 +45,7 @@ export function Wizard() {
   if (published) {
     return (
       <div className="mx-auto max-w-md border border-line bg-paper p-10 text-center ">
-        <span className="mx-auto grid h-14 w-14 place-items-center bg-sage/30 text-olive"><Icon name="check" size={26} /></span>
+        <span className="mx-auto grid h-14 w-14 place-items-center bg-sage/30 text-ink"><Icon name="check" size={26} /></span>
         <h2 className="mt-5 text-2xl font-extrabold">Ready to ship</h2>
         <p className="mt-2 text-sm text-muted">Preview build: publishing is not connected to the database yet.</p>
         <Button href="/feed" className="mt-6">Back to feed</Button>

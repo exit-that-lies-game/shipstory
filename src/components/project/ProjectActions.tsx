@@ -34,7 +34,7 @@ export function ProjectActions({ likes, title, projectId }: { likes: number; sav
       <button onClick={() => flip("reactions", liked, setLiked)} aria-pressed={liked} className={`${btn} ${liked ? "text-terracotta" : ""}`}>
         <Icon name="heart" size={17} filled={liked} />{likes + (liked ? 1 : 0) - (initial.liked ? 1 : 0)}
       </button>
-      <button onClick={() => flip("saves", saved, setSaved)} aria-pressed={saved} className={`${btn} ${saved ? "text-olive" : ""}`}>
+      <button onClick={() => flip("saves", saved, setSaved)} aria-pressed={saved} className={`${btn} ${saved ? "text-ink" : ""}`}>
         <Icon name="bookmark" size={17} filled={saved} />{saved ? "Saved" : "Save"}
       </button>
       <button onClick={share} className={btn}><Icon name="share" size={17} />{copied ? "Link copied" : "Share"}</button>

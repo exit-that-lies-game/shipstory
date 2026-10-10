@@ -16,7 +16,7 @@ export default async function Projects({ searchParams }: { searchParams: Promise
     <p className="mb-4 text-xs text-muted">Latest 100 projects. Drafts are saved but not published; admins can view them, not edit.</p>
     <div className="space-y-3">{list.map(x => <article key={x.id} className={`${card} flex flex-wrap items-center justify-between gap-4`}>
       <Link href={`/admin/projects/${x.id}`} className="min-w-0 flex-1"><h2 className="font-bold">{x.title} {x.status === "draft" && <Chip tone="mute">Draft</Chip>} {x.moderated_hidden && <Chip tone="warn">Hidden</Chip>} {reported.has(x.id) && <Chip tone="warn">Reported</Chip>}</h2><p className="mt-1 text-sm text-muted">@{x.owner} · {x.status}</p><p className="mt-1 text-sm">{x.tagline}</p></Link>
-      <div className="flex items-start gap-2"><Link href={`/admin/projects/${x.id}`} className=" border border-line bg-paper px-3 py-2 text-xs font-semibold text-olive">Open</Link><ModerationControl kind="project" target={x.id} decision={x.moderated_hidden ? "restore" : "hide"} label={x.moderated_hidden ? "Restore" : "Hide"} /></div>
+      <div className="flex items-start gap-2"><Link href={`/admin/projects/${x.id}`} className=" border border-line bg-paper px-3 py-2 text-xs font-semibold text-ink">Open</Link><ModerationControl kind="project" target={x.id} decision={x.moderated_hidden ? "restore" : "hide"} label={x.moderated_hidden ? "Restore" : "Hide"} /></div>
     </article>)}{!list.length && <Empty label="No projects here." />}</div>
   </>;
 }

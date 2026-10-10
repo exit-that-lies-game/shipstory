@@ -10,7 +10,7 @@ export function PrivateScreen({ gate, signedIn }: { gate: ProjectGate; signedIn:
     <>
       <AppNav />
       <main id="main" className="mx-auto max-w-md px-5 py-20 text-center">
-        <span className="mx-auto grid h-14 w-14 place-items-center bg-sage/30 text-olive"><Icon name="lock" size={26} /></span>
+        <span className="mx-auto grid h-14 w-14 place-items-center bg-sage/30 text-ink"><Icon name="lock" size={26} /></span>
         <h1 className="mt-5 text-2xl font-extrabold tracking-tight">This project is private</h1>
         <p className="mt-2 text-sm text-muted">
           {followers ? <>Only people who follow <b className="text-ink">@{gate.owner_handle}</b> can see it.</> : <>The builder shares it with chosen accounts only.</>}

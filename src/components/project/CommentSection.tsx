@@ -64,7 +64,7 @@ export function CommentSection({ initial, total, projectId }: { initial: Comment
       <WriteVerification />
       <form onSubmit={submit} className="mt-4 flex gap-3">
         <Avatar name="You" size={34} />
-        <input value={text} onChange={(e) => setText(e.target.value)} maxLength={600} placeholder="Add a comment..." aria-label="Add a comment" className="flex-1 border border-line bg-paper px-4 py-2.5 text-sm outline-none focus:border-olive focus:ring-2 focus:ring-[#a3b18a55]" />
+        <input value={text} onChange={(e) => setText(e.target.value)} maxLength={600} placeholder="Add a comment..." aria-label="Add a comment" className="flex-1 border border-line bg-paper px-4 py-2.5 text-sm outline-none focus:border-ink focus:ring-2 focus:ring-[#a3b18a55]" />
         <button className=" bg-terracotta px-4 text-sm font-semibold text-paper hover:bg-terracotta disabled:opacity-40" disabled={!text.trim()}>Post</button>
       </form>
       {note && <p className="mt-2 text-xs text-terracotta">{note}</p>}
