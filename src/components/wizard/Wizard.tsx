@@ -26,11 +26,15 @@ export function Wizard() {
 
   async function publish() {
     if (d.privateSource && !d.privateReviewed) return setErrors(["Review and approve the private-source text before publishing."]);
-    if (!supabaseConfigured || !d.coverFile) return setPublished(true);
+    if (!supabaseConfigured) return setPublished(true);
     setBusy(true);
     const res = await publishProject({ title: d.title, pitch: d.pitch, description: d.description, tags: d.tags, demoUrl: d.demoUrl, repoUrl: d.privateSource ? "" : d.repoUrl, cover: d.coverFile, shots: d.shotFiles, visibility: d.visibility, accessHandles: d.accessHandles });
     setBusy(false);
-    if (res.ok) return router.push(`/p/${res.slug}`);
+    if (res.ok) {
+      // No cover uploaded on a public project: ask the server to capture the live site. Failure just keeps the generated cover.
+      if (!d.coverFile && d.visibility === "public") fetch("/api/cover/capture", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug: res.slug }), keepalive: true }).catch(() => undefined);
+      return router.push(`/p/${res.slug}`);
+    }
     if (res.reason === "auth") return router.push("/login?next=/new");
     setErrors([res.reason === "limit" ? "You have published a few projects in the last hour. Try again later." : res.message ?? "Could not publish. Try again."]);
   }

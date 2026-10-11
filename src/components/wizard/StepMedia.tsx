@@ -12,7 +12,8 @@ export function StepMedia({ d, set }: { d: Draft; set: (p: Partial<Draft>) => vo
       <Field label="Repo URL" hint="optional"><input className={`${inputCls} font-mono text-sm`} value={d.repoUrl} onChange={(e) => set({ repoUrl: e.target.value })} placeholder="https://github.com/you/project" inputMode="url" /></Field>
       <p className="text-sm text-muted">Your media allowance is 20 images, up to 100 MiB. Uploads are public once stored.</p>
       <div>
-        <span className="mb-1.5 block text-sm font-semibold">Cover image</span>
+        <span className="mb-1.5 block text-sm font-semibold">Cover image <span className="font-normal text-muted">(optional)</span></span>
+        <p className="mb-2 text-sm text-muted">Skip it and a public project gets a screenshot of your live site. Restricted projects get a generated cover.</p>
         <label className="flex h-32 cursor-pointer flex-col items-center justify-center gap-2 border-2 border-dashed border-line bg-paper text-sm text-muted transition-colors hover:border-sage focus-within:outline-2 focus-within:outline-offset-4 focus-within:outline-olive">
           <Icon name="upload" size={20} />{d.coverPreview ? "Cover added. Click to replace." : "Click to upload (JPG, PNG or WebP, max 5 MiB)"}
           <input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={(e) => onCover(e.target.files?.[0])} />

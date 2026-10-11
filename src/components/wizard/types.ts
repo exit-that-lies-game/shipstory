@@ -35,7 +35,6 @@ export function stepErrors(step: number, d: Draft): string[] {
   if (step === 1) {
     if (!validUrl(d.demoUrl)) e.push("Add a valid live demo URL starting with https://");
     if (d.repoUrl && !validUrl(d.repoUrl)) e.push("Repo URL must be a valid link.");
-    if (!d.coverPreview) e.push("Upload a cover image.");
   }
   return e;
 }

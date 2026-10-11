@@ -4,7 +4,7 @@ import { currentUserId } from "./auth";
 import { findHandle, grantAccess } from "./visibility";
 import type { Visibility } from "@/shared/types";
 
-export type PublishInput = { title: string; pitch: string; description: string; tags: string[]; demoUrl: string; repoUrl: string; cover: File; shots: File[]; visibility?: Visibility; accessHandles?: string[] };
+export type PublishInput = { title: string; pitch: string; description: string; tags: string[]; demoUrl: string; repoUrl: string; cover?: File; shots: File[]; visibility?: Visibility; accessHandles?: string[] };
 export type PublishResult = { ok: true; slug: string } | { ok: false; reason: "auth" | "limit" | "error"; message?: string };
 
 const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "project";
@@ -48,8 +48,8 @@ export async function publishProject(input: PublishInput): Promise<PublishResult
   if (!uid) return { ok: false, reason: "auth" };
   try {
     if (!safeHttpUrl(input.demoUrl) || (input.repoUrl && !safeHttpUrl(input.repoUrl))) return { ok: false, reason: "error", message: "Use an http or https project link." };
-    if (input.shots.length > 6 || ![input.cover, ...input.shots].every(f => ["image/png", "image/jpeg", "image/webp"].includes(f.type))) return { ok: false, reason: "error", message: "Use PNG, JPG or WebP images, up to 6 screenshots." };
-    if (input.cover.size > 5 * 1024 * 1024 || input.shots.some((f) => f.size > 5 * 1024 * 1024)) return { ok: false, reason: "error", message: "Images must be 5 MB or smaller." };
+    if (input.shots.length > 6 || ![...(input.cover ? [input.cover] : []), ...input.shots].every(f => ["image/png", "image/jpeg", "image/webp"].includes(f.type))) return { ok: false, reason: "error", message: "Use PNG, JPG or WebP images, up to 6 screenshots." };
+    if ((input.cover?.size ?? 0) > 5 * 1024 * 1024 || input.shots.some((f) => f.size > 5 * 1024 * 1024)) return { ok: false, reason: "error", message: "Images must be 5 MB or smaller." };
     const visibility: Visibility = input.visibility ?? "public";
     const people: string[] = [];
     if (visibility === "private") {
@@ -59,15 +59,15 @@ export async function publishProject(input: PublishInput): Promise<PublishResult
         if (f.id !== uid) people.push(f.id);
       }
     }
-    const files = [input.cover, ...input.shots];
+    const files = [...(input.cover ? [input.cover] : []), ...input.shots];
     const sb = createClient();
     const uploaded: string[] = [];
-    let cover: string;
+    let cover: string | null = null;
     let shots: string[];
     if (useR2) {
       const r = await uploadToR2(files);
       uploaded.push(...r.paths);
-      [cover, ...shots] = r.urls;
+      shots = input.cover ? r.urls.slice(1) : r.urls; cover = input.cover ? r.urls[0] : null;
     } else {
       const { data: paths, error: reservationError } = await sb.rpc("reserve_media_slots", { amount: files.length });
       if (reservationError || !Array.isArray(paths)) return { ok: false, reason: "error", message: reservationError?.message ?? "Could not reserve media space. Try again." };
@@ -77,7 +77,7 @@ export async function publishProject(input: PublishInput): Promise<PublishResult
           urls.push(await upload(paths[i], files[i]));
           uploaded.push(paths[i]);
         }
-        [cover, ...shots] = urls;
+        shots = input.cover ? urls.slice(1) : urls; cover = input.cover ? urls[0] : null;
       } catch (error) {
         if (uploaded.length) await sb.storage.from("project-media").remove(uploaded);
         throw error;
