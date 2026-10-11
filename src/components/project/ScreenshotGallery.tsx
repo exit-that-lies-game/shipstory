@@ -1,13 +1,14 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
+import { CoverFallback } from "./CoverFallback";
 
 export function ScreenshotGallery({ images, title, host }: { images: string[]; title: string; host: string }) {
   const [i, setI] = useState(0);
   return (
     <div>
       <div className="relative aspect-[16/10] overflow-hidden border border-line bg-sage/30 ">
-        <Image src={images[i]} alt={`${title} screenshot ${i + 1}`} fill priority sizes="(min-width:1024px) 60vw, 100vw" className="object-cover" />
+        {images[i] ? <Image src={images[i]} alt={`${title} screenshot ${i + 1}`} fill priority sizes="(min-width:1024px) 60vw, 100vw" className="object-cover" /> : <CoverFallback title={title} />}
         <span className="absolute bottom-4 left-4 bg-paper px-3 py-1.5 font-mono text-xs font-medium shadow-sm">{host}</span>
       </div>
       {images.length > 1 && (

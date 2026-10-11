@@ -42,7 +42,7 @@ const toProject = (r: Row): Project => ({
   description: r.description ?? "",
   demoUrl: safeHttpUrl(r.live_url),
   repoUrl: safeHttpUrl(r.repo_url) || undefined,
-  cover: r.cover_url ?? "/covers/art.jpg",
+  cover: r.cover_url ?? "",
   screenshots: r.screenshots ?? [],
   tags: r.tags ?? [],
   stack: [],

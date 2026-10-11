@@ -50,7 +50,7 @@ export default async function ProjectPage({ params }: { params: Params }) {
       <div className="mx-auto grid max-w-[1300px] gap-10 px-5 py-8 lg:grid-cols-[1fr_380px] lg:px-8">
         <div className="min-w-0">
           <DoodleBack href="/feed" label="Back to feed" />
-          <ScreenshotGallery images={project.screenshots.length ? project.screenshots : [project.cover]} title={project.title} host={host} />
+          <ScreenshotGallery images={project.screenshots.length ? project.screenshots : [project.cover || ""]} title={project.title} host={host} />
           <section className="mt-10 border-t border-ink pt-5"><h2 className="label-mono text-terracotta">About this build</h2><p className="mt-3 max-w-3xl text-lg leading-relaxed text-ink/80">{project.description}</p></section>
           <ProjectUpdates projectId={project.id} owner={viewer?.id===project.owner.id} initial={updateResult.data??[]}/>
           <div className="mt-10"><CommentSection initial={comments} total={project.comments} projectId={project.id} /></div>
