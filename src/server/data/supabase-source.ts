@@ -13,14 +13,20 @@ export function safeAvatar(url: unknown): string | undefined {
   return base && typeof url === "string" && url.startsWith(base + "/") && url.length < 300 ? url : undefined;
 }
 
+// Headline and location live in the profile's links list as {type, text} entries, so no schema change is needed.
+const linkText = (links: unknown, type: string, max: number): string => {
+  const hit = Array.isArray(links) ? links.find((l: Row) => l?.type === type) : undefined;
+  return typeof hit?.text === "string" ? hit.text.slice(0, max) : "";
+};
+
 const toProfile = (r: Row): Profile => ({
   id: r.id,
   handle: r.handle,
   name: r.display_name ?? r.handle,
   avatarUrl: safeAvatar(r.avatar_url),
   bio: r.bio ?? "",
-  headline: "",
-  location: "",
+  headline: linkText(r.links, "headline", 80),
+  location: linkText(r.links, "location", 60),
   github: safeHttpUrl((r.links ?? []).find?.((l: Row) => l.type === "github")?.url) || undefined,
   website: safeHttpUrl((r.links ?? []).find?.((l: Row) => l.type === "website")?.url) || undefined,
   projectCount: 0,

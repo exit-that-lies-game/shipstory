@@ -35,7 +35,7 @@ export default async function Profile({ params }: { params: Promise<{ handle: st
             {profile.bio ? <p className="mt-2 text-[15px]">{profile.bio}</p> : <p className="mt-2 text-[15px] text-muted">No bio yet.</p>}
             <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2">{stat(profile.projectCount, "projects", "folder")}{stat(profile.followers, "followers", "users")}{stat(profile.reactions >= 1000 ? `${(profile.reactions / 1000).toFixed(1)}k` : profile.reactions, "reactions", "heart")}</div>
           </div>
-          <div className="flex flex-wrap gap-3">{!isMe && <FollowButton userId={profile.id} />}{profile.github && <Button href={profile.github} variant="ghost" size="md"><Icon name="github" size={16} />GitHub</Button>}{profile.website && <Button href={profile.website} variant="ghost" size="md">Website</Button>}</div>
+          <div className="flex flex-wrap gap-3">{!isMe && <FollowButton userId={profile.id} />}{isMe && <Button href="/settings/profile" variant="ghost" size="md">Edit profile</Button>}{profile.github && <Button href={profile.github} variant="ghost" size="md"><Icon name="github" size={16} />GitHub</Button>}{profile.website && <Button href={profile.website} variant="ghost" size="md">Website</Button>}</div>
         </div>
         <div className="mb-6 mt-10 flex items-center justify-between border-b border-ink pb-3"><span className="label-mono">Projects · {String(projects.length).padStart(2, "0")}</span></div>
         <ProjectGrid projects={projects} showOwner={false} />
